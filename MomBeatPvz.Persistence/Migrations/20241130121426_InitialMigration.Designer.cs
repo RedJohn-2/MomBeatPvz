@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MomBeatPvz.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20241111191817_InitialMigration")]
+    [Migration("20241130121426_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -82,8 +82,8 @@ namespace MomBeatPvz.Persistence.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
+                    b.Property<long>("CreatorId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -119,8 +119,8 @@ namespace MomBeatPvz.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
+                    b.Property<long>("OwnerId")
+                        .HasColumnType("bigint");
 
                     b.Property<long?>("TierListId")
                         .HasColumnType("bigint");
@@ -136,9 +136,11 @@ namespace MomBeatPvz.Persistence.Migrations
 
             modelBuilder.Entity("MomBeatPvz.Persistence.Entities.UserEntity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -159,7 +161,7 @@ namespace MomBeatPvz.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("MomBeatPvz.Persistence.Entities.TierListSolutionEntity", "Solution")
-                        .WithMany("Prices")
+                        .WithMany("HeroPrices")
                         .HasForeignKey("SolutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -212,7 +214,7 @@ namespace MomBeatPvz.Persistence.Migrations
 
             modelBuilder.Entity("MomBeatPvz.Persistence.Entities.TierListSolutionEntity", b =>
                 {
-                    b.Navigation("Prices");
+                    b.Navigation("HeroPrices");
                 });
 #pragma warning restore 612, 618
         }

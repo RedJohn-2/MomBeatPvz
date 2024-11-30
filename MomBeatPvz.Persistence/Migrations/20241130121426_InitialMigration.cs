@@ -30,7 +30,8 @@ namespace MomBeatPvz.Persistence.Migrations
                 name: "User",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: false)
                 },
                 constraints: table =>
@@ -70,7 +71,7 @@ namespace MomBeatPvz.Persistence.Migrations
                     MaxPrice = table.Column<int>(type: "integer", nullable: false),
                     ResultId = table.Column<long>(type: "bigint", nullable: false),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: false)
+                    CreatorId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,7 +91,7 @@ namespace MomBeatPvz.Persistence.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TierListId = table.Column<long>(type: "bigint", nullable: true),
-                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false)
+                    OwnerId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
