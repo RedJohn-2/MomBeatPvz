@@ -25,9 +25,9 @@ namespace MomBeatPvz.Application.Services
             await _heroStore.Update(model);
         }
 
-        public async Task<Hero> GetByIdAsync(long id)
+        public async Task<Hero> GetByIdAsync(int id)
         {
-            return await GetByIdAsync(id);
+            return await _heroStore.GetById(id);
         }
 
         public async Task<IReadOnlyList<Hero>> GetAllAsync()
