@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using MomBeatPvz.Application.Interfaces;
+using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Application.Services;
 using MomBeatPvz.Core.Store;
 using MomBeatPvz.Infrastructure.Auth;
+using MomBeatPvz.Persistence.Operations;
+using MomBeatPvz.Persistence.Repositories;
 using System.Text;
 
 namespace MomBeatPvz.Api.Extentions
@@ -13,16 +16,34 @@ namespace MomBeatPvz.Api.Extentions
     {
         public static IServiceCollection AddHeroServices(this IServiceCollection services)
         {
-            //services.AddScoped<IHeroStore, HeroService>();
+            services.AddScoped<IHeroStore, HeroRepository>();
             services.AddScoped<IHeroService, HeroService>();
+
             return services;
         }
 
         public static IServiceCollection AddTierListServices(this IServiceCollection services)
         {
+            services.AddScoped<ITierListStore, TierListRepository>();
             services.AddScoped<ITierListService, TierListService>();
 
+            services.AddScoped<ITierListSolutionStore, TierListSolutionRepository>();
             services.AddScoped<ITierListSolutionService, TierListSolutionService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddUnitOfWork(this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddUserServices(this IServiceCollection services)
+        {
+            services.AddScoped<IUserStore, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }
@@ -57,5 +78,6 @@ namespace MomBeatPvz.Api.Extentions
 
             return services;
         }
+
     }
 }

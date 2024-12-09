@@ -14,6 +14,7 @@ namespace MomBeatPvz.Application.Services
     {
         private readonly ITierListStore _tierListStore;
 
+
         public TierListService(ITierListStore tierListStore)
         {
             _tierListStore = tierListStore;

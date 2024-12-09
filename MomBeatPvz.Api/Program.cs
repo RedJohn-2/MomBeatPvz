@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Api.Extentions;
+using MomBeatPvz.Infrastructure.Auth;
 using MomBeatPvz.Persistence;
 using MomBeatPvz.Persistence.Mapping;
 
@@ -9,8 +11,17 @@ builder.Services.AddAutoMapper(typeof(ToDaoMappingProfile).Assembly);
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
 
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+
+builder.Services.AddUnitOfWork();
+builder.Services.AddUserServices();
+builder.Services.AddHeroServices();
+builder.Services.AddTierListServices();
+
+builder.Services.AddAuthenticationServices(builder.Configuration);
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -25,6 +36,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

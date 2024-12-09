@@ -8,16 +8,8 @@ namespace MomBeatPvz.Core.ModelUpdate
 {
     public class Trackable<T>
     {
-        public T? Field { get; private set; }
-        public bool IsTracked { get; private set; }
+        public T? Value { get; set; }
+        public bool IsTracked { get; set; }
 
-        public static Trackable<T> TrackField(T field)
-        {
-            return new Trackable<T>
-            {
-                Field = field,
-                IsTracked = true
-            };
-        }
     }
 }
