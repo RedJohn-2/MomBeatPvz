@@ -17,7 +17,7 @@ namespace MomBeatPvz.Application.Services
     {
         private readonly ITierListSolutionStore _tierListSolutionStore;
 
-        private readonly IUnitOfWork _unitOfWork
+        private readonly IUnitOfWork _unitOfWork;
 
         public TierListSolutionService(
             ITierListSolutionStore tierListSolutionStore,
@@ -54,6 +54,11 @@ namespace MomBeatPvz.Application.Services
         public async Task<TierListSolution> GetByIdAsync(long id)
         {
             return await _tierListSolutionStore.GetById(id);
+        }
+
+        public async Task<IReadOnlyList<TierListSolution>> GetByTierListIdAsync(long id)
+        {
+            return await _tierListSolutionStore.GetByTierListId(id);
         }
 
         public async Task UpdateAsync(TierListSolutionUpdateModel model)

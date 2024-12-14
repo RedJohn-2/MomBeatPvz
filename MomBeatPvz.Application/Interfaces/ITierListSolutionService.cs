@@ -20,5 +20,7 @@ namespace MomBeatPvz.Application.Interfaces
         Task<TierListSolution> GetByIdAsync(long id);
 
         Task<IReadOnlyList<TierListSolution>> GetAllAsync();
+
+        Task<IReadOnlyList<TierListSolution>> GetByTierListIdAsync(long id);
     }
 }

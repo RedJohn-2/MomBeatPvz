@@ -16,5 +16,7 @@ namespace MomBeatPvz.Application.Interfaces
         Task UpdateAsync(TierListUpdateModel model);
 
         Task<TierList> GetByIdAsync(long id);
+
+        Task<IReadOnlyCollection<TierList>> GetAllAsync();
     }
 }

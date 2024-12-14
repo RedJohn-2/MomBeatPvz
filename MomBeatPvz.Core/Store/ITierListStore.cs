@@ -20,5 +20,7 @@ namespace MomBeatPvz.Core.Store
 
         Task<IReadOnlyList<TierList>> GetByName(string name);
 
+        Task<IReadOnlyList<TierList>> GetAll();
+
     }
 }

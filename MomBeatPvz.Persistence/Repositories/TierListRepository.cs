@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace MomBeatPvz.Persistence.Repositories
 {
@@ -37,6 +38,15 @@ namespace MomBeatPvz.Persistence.Repositories
             await _db.TierLists
                 .Where(t => t.Id == id)
                 .ExecuteDeleteAsync();
+        }
+
+        public async Task<IReadOnlyList<TierList>> GetAll()
+        {
+            var existedTierLists = await _db.TierLists
+                .Include(t => t.Creator)
+                .ToListAsync();
+
+            return _mapper.Map<IReadOnlyList<TierList>>(existedTierLists);
         }
 
         public async Task<TierList> GetById(long id)

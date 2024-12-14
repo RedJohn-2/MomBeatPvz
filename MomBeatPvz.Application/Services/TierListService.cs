@@ -14,7 +14,6 @@ namespace MomBeatPvz.Application.Services
     {
         private readonly ITierListStore _tierListStore;
 
-
         public TierListService(ITierListStore tierListStore)
         {
             _tierListStore = tierListStore;
@@ -33,6 +32,11 @@ namespace MomBeatPvz.Application.Services
         public async Task<TierList> GetByIdAsync(long id)
         {
             return await _tierListStore.GetById(id);
+        }
+
+        public async Task<IReadOnlyCollection<TierList>> GetAllAsync()
+        {
+            return await _tierListStore.GetAll();
         }
     }
 }

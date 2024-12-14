@@ -61,6 +61,17 @@ namespace MomBeatPvz.Persistence.Repositories
             return _mapper.Map<TierListSolution>(solutionEntity);
         }
 
+        public async Task<IReadOnlyList<TierListSolution>> GetByTierListId(long id)
+        {
+            var solutionEntities = await _db.TierListSolutions
+                .Where(s => s.TierList.Id == id)
+                .Include(s => s.Owner)
+                .Include(s => s.HeroPrices)
+                .ToListAsync();
+
+            return _mapper.Map<List<TierListSolution>>(solutionEntities);
+        }
+
         public async Task Update(TierListSolutionUpdateModel tierListSolution)
         {
             var existedSolution = await _db.TierListSolutions
