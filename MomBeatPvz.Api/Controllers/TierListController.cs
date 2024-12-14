@@ -20,7 +20,7 @@ namespace MomBeatPvz.Api.Controllers
         }
 
         [HttpPost("[action]")]
-        [Authorize]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> Create(TierListCreateModel model)
         {
             await _tierListService.CreateAsync(model);
@@ -37,6 +37,7 @@ namespace MomBeatPvz.Api.Controllers
         }
 
         [HttpPut("[action]")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> Update(TierListUpdateModel model)
         {
             await _tierListService.UpdateAsync(model);

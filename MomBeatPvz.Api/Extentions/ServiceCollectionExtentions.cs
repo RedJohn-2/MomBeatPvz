@@ -76,6 +76,15 @@ namespace MomBeatPvz.Api.Extentions
                     };
                 });
 
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("Admin", policy =>
+                {
+                    policy.RequireClaim("Role", "Admin");
+                });
+
+            });
+
             return services;
         }
 

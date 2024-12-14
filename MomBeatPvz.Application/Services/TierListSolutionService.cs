@@ -36,9 +36,9 @@ namespace MomBeatPvz.Application.Services
         {
             await _unitOfWork.InTransaction(async () =>
             {
-                var solution = await _tierListSolutionStore.GetById(id);
+                var solutionExist = await _tierListSolutionStore.Exist(id);
 
-                if (solution != null)
+                if (solutionExist)
                 {
                     await _tierListSolutionStore.Delete(id);
                 }

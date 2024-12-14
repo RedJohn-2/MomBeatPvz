@@ -22,5 +22,7 @@ namespace MomBeatPvz.Core.Store
 
         Task<IReadOnlyList<TierList>> GetAll();
 
+        Task<bool> Exist(long id);
+
     }
 }

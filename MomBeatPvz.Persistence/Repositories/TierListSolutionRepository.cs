@@ -40,6 +40,13 @@ namespace MomBeatPvz.Persistence.Repositories
                 .ExecuteDeleteAsync();
         }
 
+        public async Task<bool> Exist(long id)
+        {
+            return await _db.TierListSolutions
+                .Where(s => s.Id == id)
+                .AnyAsync();
+        }
+
         public async Task<IReadOnlyList<TierListSolution>> GetAll()
         {
             var solutionEntities = await _db.TierListSolutions

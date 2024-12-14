@@ -2,11 +2,7 @@
 using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.Store;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace MomBeatPvz.Application.Services
 {
@@ -22,15 +18,19 @@ namespace MomBeatPvz.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task AuthAsync(User user)
+        public async Task AuthAsync(User user, IEnumerable<Claim> claims)
         {
             await _unitOfWork.InTransaction(async () =>
             {
                 var existedUser = await _userStore.GetById(user.Id);
 
-                if (existedUser == null) 
+                if (existedUser is null) 
                 {
                     await _userStore.Create(user);
+                }
+                else
+                {
+                    claims.Append(new Claim("Admin", "Role"));
                 }
             });
         }
@@ -38,6 +38,11 @@ namespace MomBeatPvz.Application.Services
         public async Task<User> GetByIdAsync(long id)
         {
             return await _userStore.GetById(id);
+        }
+
+        public Task<bool> IsAdminAsync(long id)
+        {
+            return _userStore.IsAdmin(id);
         }
     }
 }

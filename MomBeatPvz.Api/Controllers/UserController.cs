@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Infrastructure.Auth;
+using System.Security.Claims;
 
 namespace MomBeatPvz.Api.Controllers
 {
@@ -25,8 +26,13 @@ namespace MomBeatPvz.Api.Controllers
 
             var username = User.Claims.First(c => c.Type == "username").Value;
 
-            await _userService.AuthAsync(new User { Id = userId, Name = username});
+            await _userService.AuthAsync(new User { Id = userId, Name = username}, User.Claims);
 
+            if (await _userService.IsAdminAsync(userId))
+            {
+                User.Claims.Append(new Claim("Role", "Admin"));
+            }
+            
             return Ok();
         }
     }

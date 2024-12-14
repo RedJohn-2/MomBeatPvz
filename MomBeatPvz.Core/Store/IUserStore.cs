@@ -13,6 +13,6 @@ namespace MomBeatPvz.Core.Store
 
         Task<User> GetById(long id);
 
-        Task<IReadOnlyList<User>> GetAll();      
+        Task<IReadOnlyList<User>> GetAll();
     }
 }

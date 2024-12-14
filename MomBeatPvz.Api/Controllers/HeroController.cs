@@ -20,6 +20,7 @@ namespace MomBeatPvz.Api.Controllers
         }
 
         [HttpPost("[action]")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> Create(HeroCreateModel model)
         {
             await _heroService.CreateAsync(model);
@@ -36,6 +37,7 @@ namespace MomBeatPvz.Api.Controllers
         }
 
         [HttpPut("[action]")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> Update(HeroUpdateModel model)
         {
             await _heroService.UpdateAsync(model);
