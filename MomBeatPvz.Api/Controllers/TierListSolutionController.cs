@@ -6,6 +6,8 @@ using MomBeatPvz.Core.ModelUpdate;
 
 namespace MomBeatPvz.Api.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class TierListSolutionController : ControllerBase
     {
         private readonly ITierListSolutionService _tierListSolutionService;

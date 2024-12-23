@@ -1,14 +1,10 @@
 ﻿namespace MomBeatPvz.Core.Model
 {
-    public class User
+    public class UserUpdateModel
     {
         public long Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
-
-        public bool IsAdmin { get; set; }
-
-        public Guid Secret { get; set; }
 
         public DateTime Created { get; set; }
 

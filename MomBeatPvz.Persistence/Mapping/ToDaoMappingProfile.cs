@@ -29,6 +29,7 @@ namespace MomBeatPvz.Persistence.Mapping
                 });
 
             CreateMap<User, UserEntity>();
+            CreateMap<UserUpdateModel, UserEntity>();
 
             CreateMap<TierListSolutionCreateModel, TierListSolutionEntity>();
             CreateMap<TierListSolutionUpdateModel, TierListSolutionEntity>()

@@ -12,27 +12,54 @@ namespace MomBeatPvz.Application.Services
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public UserService(IUserStore userStore, IUnitOfWork unitOfWork)
+        private readonly IJwtProvider _jwtProvider;
+
+        public UserService(IUserStore userStore, IUnitOfWork unitOfWork, IJwtProvider jwtProvider)
         {
             _userStore = userStore;
             _unitOfWork = unitOfWork;
+            _jwtProvider = jwtProvider;
         }
 
-        public async Task AuthAsync(User user, IEnumerable<Claim> claims)
+        public async Task<string> AuthAsync(long telegramId, string name, Guid secret)
         {
+            string token = string.Empty;
+
             await _unitOfWork.InTransaction(async () =>
             {
-                var existedUser = await _userStore.GetById(user.Id);
+                var existedUser = await _userStore.GetBySecret(secret);
 
                 if (existedUser is null) 
                 {
-                    await _userStore.Create(user);
+                    throw new Exception();
                 }
-                else
+
+                if (existedUser.Created == DateTime.MinValue)
                 {
-                    claims.Append(new Claim("Admin", "Role"));
+                    await _userStore.Update(
+                        new UserUpdateModel()
+                        {
+                            Id = existedUser.Id,
+                            Name = name,
+                            TelegramId = telegramId,
+                            Created = DateTime.UtcNow
+                        });
                 }
+
+                token = _jwtProvider.GenerateAccessToken(existedUser);
+                                    
             });
+
+            return token;
+        }
+
+        public async Task<string> CreateAsync()
+        {
+            var newUser = new User();
+
+            await _userStore.Create(newUser);
+
+            return newUser.Secret.ToString();
         }
 
         public async Task<User> GetByIdAsync(long id)
@@ -40,9 +67,5 @@ namespace MomBeatPvz.Application.Services
             return await _userStore.GetById(id);
         }
 
-        public Task<bool> IsAdminAsync(long id)
-        {
-            return _userStore.IsAdmin(id);
-        }
     }
 }

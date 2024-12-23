@@ -53,6 +53,8 @@ namespace MomBeatPvz.Api.Extentions
         {
             var jwtOpt = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
 
+            services.AddScoped<IJwtProvider, JwtProvider>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
                 {
@@ -64,23 +66,13 @@ namespace MomBeatPvz.Api.Extentions
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpt!.SecretKey))
                     };
-
-                    opt.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            context.Token = context.Request.Cookies[jwtOpt.CookieAccessToken];
-
-                            return Task.CompletedTask;
-                        }
-                    };
                 });
 
             services.AddAuthorization(opt =>
             {
                 opt.AddPolicy("Admin", policy =>
                 {
-                    policy.RequireClaim("Role", "Admin");
+                    policy.RequireClaim("isAdmim", "True");
                 });
 
             });

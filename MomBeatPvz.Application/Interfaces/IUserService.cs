@@ -10,10 +10,11 @@ namespace MomBeatPvz.Application.Interfaces
 {
     public interface IUserService
     {
-        Task AuthAsync(User user, IEnumerable<Claim> claims);
+        Task AuthAsync(long telegramId, string name, Guid secret);
+
+        Task<string> CreateAsync();
 
         Task<User> GetByIdAsync(long id);
 
-        Task<bool> IsAdminAsync(long id);
     }
 }

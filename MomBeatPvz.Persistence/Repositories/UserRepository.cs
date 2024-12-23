@@ -46,5 +46,25 @@ namespace MomBeatPvz.Persistence.Repositories
 
             return _mapper.Map<User>(userEntity);
         }
+
+        public async Task<User> GetBySecret(Guid secret)
+        {
+            var userEntity = await _db.Users
+                .FirstOrDefaultAsync(u => u.Secret == secret)
+                ?? throw new Exception();
+
+            return _mapper.Map<User>(userEntity);
+        }
+
+        public async Task Update(UserUpdateModel model)
+        {
+            var existedUser = await _db.Users
+                .FirstOrDefaultAsync(u => u.Id == model.Id)
+                ?? throw new Exception();
+
+            _mapper.Map(model, existedUser);
+
+            await _db.SaveChangesAsync();
+        }
     }
 }

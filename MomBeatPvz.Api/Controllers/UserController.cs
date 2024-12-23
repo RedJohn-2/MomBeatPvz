@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MomBeatPvz.Api.Contracts;
 using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Infrastructure.Auth;
@@ -19,21 +20,19 @@ namespace MomBeatPvz.Api.Controllers
         }
 
         [HttpPost("[action]")]
-        [Authorize]
-        public async Task<ActionResult> Login()
+        public async Task<ActionResult> Login(UserAuthRequest request)
         {
-            var userId = long.Parse(User.Claims.First(c => c.Type == "user_id").Value);
-
-            var username = User.Claims.First(c => c.Type == "username").Value;
-
-            await _userService.AuthAsync(new User { Id = userId, Name = username}, User.Claims);
-
-            if (await _userService.IsAdminAsync(userId))
-            {
-                User.Claims.Append(new Claim("Role", "Admin"));
-            }
+            await _userService.AuthAsync(request.TelegramId, request.Name, Guid.Parse(request.Secret));
             
             return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult> Create()
+        {
+            var secret = await _userService.CreateAsync();
+
+            return Ok(secret);
         }
     }
 }

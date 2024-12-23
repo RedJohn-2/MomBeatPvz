@@ -6,6 +6,6 @@ namespace MomBeatPvz.Infrastructure.Auth
     {
         public string SecretKey { get; set; } = string.Empty;
 
-        public string CookieAccessToken { get; set; } = string.Empty;
+        public int ExpiresAccessTokenSeconds { get; set; }
     }
 }
