@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using MomBeatPvz.Application.Operations.UnitOfWork;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MomBeatPvz.Application.Operations.UnitOfWork;
 
 namespace MomBeatPvz.Persistence.Operations
 {
@@ -17,7 +11,7 @@ namespace MomBeatPvz.Persistence.Operations
             _db = db; 
         }
 
-        public async Task InTransaction(Func<Task> action, Exception? ex = null)
+        public async Task InTransaction(Func<Task> action)
         {
             await using var transaction = await _db.Database.BeginTransactionAsync();
 
@@ -27,18 +21,15 @@ namespace MomBeatPvz.Persistence.Operations
 
                 await transaction.CommitAsync();
             }
-            catch
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
 
-                if (ex is not null)
-                {
-                    throw ex;
-                }
+                throw;
             }
-        }
+        }     
 
-        public async Task<T> InTransaction<T, E>(Func<Task<T>> action, E? ex = null) where E : Exception
+        public async Task<T> InTransaction<T>(Func<Task<T>> action)
         {
             await using var transaction = await _db.Database.BeginTransactionAsync();
 
@@ -50,16 +41,11 @@ namespace MomBeatPvz.Persistence.Operations
 
                 return result;
             }
-            catch
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
 
-                if (ex is not null)
-                {
-                    throw ex;  
-                }
-
-                throw new Exception();
+                throw;
             }
         }
     }

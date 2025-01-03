@@ -22,7 +22,7 @@ namespace MomBeatPvz.Persistence.Repositories
         {
             var userEntity = _mapper.Map<UserEntity>(user);
 
-            await _db.AddAsync(user);
+            await _db.AddAsync(userEntity);
 
             await _db.SaveChangesAsync();
         }
