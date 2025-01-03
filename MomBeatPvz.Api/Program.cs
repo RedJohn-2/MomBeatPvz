@@ -13,6 +13,8 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
 
+builder.Services.Configure<HashOptions>(builder.Configuration.GetSection(nameof(HashOptions)));
+
 builder.Services.AddUnitOfWork();
 builder.Services.AddUserServices();
 builder.Services.AddHeroServices();

@@ -2,10 +2,12 @@
 {
     public class UserAuthRequest
     {
-        public long TelegramId { get; set; }
+        public long Id { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
 
-        public string Secret { get; set; } = string.Empty;
+        public DateTime Expired { get; set; }
+
+        public string Hash { get; set; } = string.Empty;
     }
 }

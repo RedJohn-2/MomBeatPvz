@@ -13,8 +13,6 @@ namespace MomBeatPvz.Core.Store
 
         Task<User> GetById(long id);
 
-        Task<User> GetBySecret(Guid secret);
-
         Task<IReadOnlyList<User>> GetAll();
 
         Task Update(UserUpdateModel model);

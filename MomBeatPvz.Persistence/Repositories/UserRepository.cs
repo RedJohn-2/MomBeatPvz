@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.Store;
 using MomBeatPvz.Persistence.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MomBeatPvz.Persistence.Repositories
 {
@@ -41,17 +37,7 @@ namespace MomBeatPvz.Persistence.Repositories
         public async Task<User> GetById(long id)
         {
             var userEntity = await _db.Users
-                .FirstOrDefaultAsync(u => u.Id == id)
-                ?? throw new Exception();
-
-            return _mapper.Map<User>(userEntity);
-        }
-
-        public async Task<User> GetBySecret(Guid secret)
-        {
-            var userEntity = await _db.Users
-                .FirstOrDefaultAsync(u => u.Secret == secret)
-                ?? throw new Exception();
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             return _mapper.Map<User>(userEntity);
         }
@@ -60,7 +46,7 @@ namespace MomBeatPvz.Persistence.Repositories
         {
             var existedUser = await _db.Users
                 .FirstOrDefaultAsync(u => u.Id == model.Id)
-                ?? throw new Exception();
+                ?? throw new NotFoundException();
 
             _mapper.Map(model, existedUser);
 

@@ -10,9 +10,7 @@ namespace MomBeatPvz.Application.Interfaces
 {
     public interface IUserService
     {
-        Task AuthAsync(long telegramId, string name, Guid secret);
-
-        Task<string> CreateAsync();
+        Task<string> AuthAsync(long id, string username, DateTime expired, string hash);
 
         Task<User> GetByIdAsync(long id);
 

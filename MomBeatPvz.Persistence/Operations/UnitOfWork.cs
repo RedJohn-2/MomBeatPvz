@@ -17,7 +17,7 @@ namespace MomBeatPvz.Persistence.Operations
             _db = db; 
         }
 
-        public async Task InTransaction(Func<Task> action)
+        public async Task InTransaction(Func<Task> action, Exception? ex = null)
         {
             await using var transaction = await _db.Database.BeginTransactionAsync();
 
@@ -30,6 +30,36 @@ namespace MomBeatPvz.Persistence.Operations
             catch
             {
                 await transaction.RollbackAsync();
+
+                if (ex is not null)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public async Task<T> InTransaction<T, E>(Func<Task<T>> action, E? ex = null) where E : Exception
+        {
+            await using var transaction = await _db.Database.BeginTransactionAsync();
+
+            try
+            {
+                var result = await action();
+
+                await transaction.CommitAsync();
+
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+
+                if (ex is not null)
+                {
+                    throw ex;  
+                }
+
+                throw new Exception();
             }
         }
     }

@@ -8,6 +8,8 @@ namespace MomBeatPvz.Application.Operations.UnitOfWork
 {
     public interface IUnitOfWork
     {
-        Task InTransaction(Func<Task> action);
+        Task InTransaction(Func<Task> action, Exception? ex = null);
+
+        Task<T> InTransaction<T, E>(Func<Task<T>> action, E? ex = null) where E : Exception;
     }
 }

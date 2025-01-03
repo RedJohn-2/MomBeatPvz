@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.ModelUpdate;
@@ -62,8 +63,7 @@ namespace MomBeatPvz.Persistence.Repositories
             var solutionEntity = await _db.TierListSolutions
                 .Include(s => s.Owner)
                 .Include(s => s.HeroPrices)
-                .FirstOrDefaultAsync(s => s.Id == id)
-                ?? throw new Exception();
+                .FirstOrDefaultAsync(s => s.Id == id);
 
             return _mapper.Map<TierListSolution>(solutionEntity);
         }
@@ -83,7 +83,7 @@ namespace MomBeatPvz.Persistence.Repositories
         {
             var existedSolution = await _db.TierListSolutions
                 .FirstOrDefaultAsync(s => s.Id == tierListSolution.Id)
-                ?? throw new Exception();
+                ?? throw new NotFoundException();
 
             await _db.HeroPrices
                 .Where(p => p.Solution == existedSolution)

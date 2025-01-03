@@ -22,21 +22,20 @@ namespace MomBeatPvz.Api.Middlewares
             }
             catch (AuthenticationException ex)
             {
-                await HandleExceptionAsync(context, ex.Message, HttpStatusCode.Unauthorized, ex.Message);
+                await HandleExceptionAsync(context, HttpStatusCode.Unauthorized, ex.Message);
             }
             catch (ValidationException ex)
             {
-                await HandleExceptionAsync(context, ex.Message, HttpStatusCode.BadRequest, ex.Message);
+                await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message);
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex.Message, HttpStatusCode.InternalServerError, ex.Message);
+                await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         private async Task HandleExceptionAsync(
             HttpContext context,
-            string exMessage,
             HttpStatusCode statusCode,
             string message)
         {

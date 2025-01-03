@@ -22,17 +22,9 @@ namespace MomBeatPvz.Api.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult> Login(UserAuthRequest request)
         {
-            await _userService.AuthAsync(request.TelegramId, request.Name, Guid.Parse(request.Secret));
+            var jwt = await _userService.AuthAsync(request.Id, request.Username, request.Expired, request.Hash);
             
-            return Ok();
-        }
-
-        [HttpPost("[action]")]
-        public async Task<ActionResult> Create()
-        {
-            var secret = await _userService.CreateAsync();
-
-            return Ok(secret);
+            return Ok(jwt);
         }
     }
 }

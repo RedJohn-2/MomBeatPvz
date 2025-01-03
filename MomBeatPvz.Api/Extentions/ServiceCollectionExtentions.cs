@@ -55,6 +55,8 @@ namespace MomBeatPvz.Api.Extentions
 
             services.AddScoped<IJwtProvider, JwtProvider>();
 
+            services.AddScoped<IHashProvider, HashProvider>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
                 {

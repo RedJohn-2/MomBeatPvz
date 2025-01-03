@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.ModelUpdate;
@@ -57,8 +58,7 @@ namespace MomBeatPvz.Persistence.Repositories
         public async Task<Hero> GetById(int id)
         {
             var existedHero = await _db.Heroes
-                .FirstOrDefaultAsync(h => h.Id == id)
-                ?? throw new Exception();
+                .FirstOrDefaultAsync(h => h.Id == id);
 
             return _mapper.Map<Hero>(existedHero);
         }
@@ -67,7 +67,7 @@ namespace MomBeatPvz.Persistence.Repositories
         {
             var existedHero = await _db.Heroes
                 .FirstOrDefaultAsync(h => h.Id == hero.Id)
-                ?? throw new Exception();
+                ?? throw new NotFoundException();
 
             _mapper.Map(hero, existedHero);
 
