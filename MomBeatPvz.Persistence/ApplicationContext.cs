@@ -27,6 +27,10 @@ namespace MomBeatPvz.Persistence
             modelBuilder.ApplyConfiguration(new TierListConfiguration());
             modelBuilder.ApplyConfiguration(new TierListSolutionConfiguration());
             modelBuilder.ApplyConfiguration(new HeroPriceConfiguration());
+            modelBuilder.ApplyConfiguration(new TeamConfiguration());
+            modelBuilder.ApplyConfiguration(new MatchConfiguration());
+            modelBuilder.ApplyConfiguration(new MatchResultConfiguration());
+            modelBuilder.ApplyConfiguration(new ChampionshipConfiguration());
         }
     }
 }

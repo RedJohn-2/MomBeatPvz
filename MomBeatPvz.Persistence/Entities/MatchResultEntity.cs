@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Persistence.Entities
 {
-    public class HeroPriceEntity
+    public class MatchResultEntity
     {
         public Guid Id { get; set; }
 
-        public HeroEntity Hero { get; set; } = new();
+        public MatchEntity Match { get; set; } = new();
 
-        public int Value { get; set; }
+        public TeamEntity Team { get; set; } = new();
 
-        public TierListSolutionEntity Solution { get; set; } = new();
+        public double Score { get; set; }
     }
 }

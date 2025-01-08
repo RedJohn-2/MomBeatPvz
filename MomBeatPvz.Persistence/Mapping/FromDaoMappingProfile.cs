@@ -22,6 +22,14 @@ namespace MomBeatPvz.Persistence.Mapping
             CreateMap<TierListEntity, TierList>();
 
             CreateMap<HeroPriceEntity, HeroPrice>();
+
+            CreateMap<MatchResultEntity, MatchResult>();
+
+            CreateMap<MatchEntity, Match>();
+
+            CreateMap<ChampionshipEntity, Championship>();
+
+            CreateMap<TeamEntity, Team>();
         }  
     }
 }

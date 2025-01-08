@@ -8,9 +8,12 @@ namespace MomBeatPvz.Core.Model
 {
     public class TierListSolution
     {
-        public long Id { get; set; }      
+        public long Id { get; set; }   
+        
         public TierList TierList { get; set; } = new();
+
         public User Owner { get; set; } = new();
+
         public List<HeroPrice> Prices { get; set; } = new();
     }
 }

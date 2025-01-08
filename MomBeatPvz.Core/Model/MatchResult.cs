@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Model
 {
-    public class HeroPrice
+    public class MatchResult
     {
         public Guid Id { get; set; }
 
-        public Hero Hero { get; set; } = new();
+        public Match Match { get; set; } = new();
 
-        public int Value { get; set; }
+        public Team Team { get; set; } = new();
 
-        public TierListSolution Solution { get; set; } = new();
+        public double Score { get; set; }
     }
 }
