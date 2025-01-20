@@ -1,6 +1,7 @@
 ﻿using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.ModelUpdate;
+using MomBeatPvz.Core.Store.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +10,7 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Store
 {
-    public interface IHeroStore
+    public interface IHeroStore : IStore<Hero, HeroCreateModel, HeroUpdateModel, int>
     {
-        Task Create(HeroCreateModel hero);
-
-        Task Update(HeroUpdateModel hero);
-
-        Task Delete(int id);
-
-        Task<Hero> GetById(int id);
-
-        Task<IReadOnlyList<Hero>> GetAll();
-
-        Task<bool> Exist(int id);
-
     }
 }

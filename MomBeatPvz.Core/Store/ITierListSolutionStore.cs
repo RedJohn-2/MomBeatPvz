@@ -1,6 +1,7 @@
 ﻿using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.ModelUpdate;
+using MomBeatPvz.Core.Store.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +10,10 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Store
 {
-    public interface ITierListSolutionStore
+    public interface ITierListSolutionStore : 
+        IStore<TierListSolution, TierListSolutionCreateModel, TierListSolutionUpdateModel, long>
     {
-        Task Create(TierListSolutionCreateModel tierListSolution);
-
-        Task Update(TierListSolutionUpdateModel tierListSolution);
-
-        Task Delete(long id);
-
-        Task<TierListSolution> GetById(long id);
-
         Task<IReadOnlyList<TierListSolution>> GetByTierListId(long id);
 
-        Task<IReadOnlyList<TierListSolution>> GetAll();
-
-        Task<bool> Exist(long id);
     }
 }

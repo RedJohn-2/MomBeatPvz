@@ -1,4 +1,4 @@
-﻿using MomBeatPvz.Core.Model.Abstract;
+﻿using MomBeatPvz.Core.ModelCreate.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Model
 {
-    public class Team : BaseLongModel
+    public class TeamModelCreate : ICreateModel<Team>
     {
         public string Name { get; set; } = string.Empty;
 

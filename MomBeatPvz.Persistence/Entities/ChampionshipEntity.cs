@@ -1,5 +1,6 @@
 ﻿using MomBeatPvz.Core.Enums;
 using MomBeatPvz.Core.Model;
+using MomBeatPvz.Persistence.Entities.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Persistence.Entities
 {
-    public class ChampionshipEntity
+    public class ChampionshipEntity : IEntity<Championship, long>
     {
         public long Id { get; set; }
 
@@ -20,7 +21,7 @@ namespace MomBeatPvz.Persistence.Entities
 
         public ChampionshipFormat Format { get; set; }
 
-        public TierListEntity? TierList { get; set; } = new();
+        public TierListEntity? TierList { get; set; }
 
         public DateTime? StartDate { get; set; }
 

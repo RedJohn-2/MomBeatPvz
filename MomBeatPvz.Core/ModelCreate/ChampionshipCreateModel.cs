@@ -1,5 +1,5 @@
 ﻿using MomBeatPvz.Core.Enums;
-using MomBeatPvz.Core.Model.Abstract;
+using MomBeatPvz.Core.ModelCreate.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +8,11 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Model
 {
-    public class Championship : BaseLongModel
+    public class ChampionshipCreateModel : ICreateModel<Championship>
     {
         public string Name { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
-
-        public ChampionshipStage Stage { get; set; }
 
         public ChampionshipFormat Format { get; set; }
 
@@ -23,10 +21,6 @@ namespace MomBeatPvz.Core.Model
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
-
-        public List<Team> Teams { get; set; } = new();
-
-        public List<Match> Matches { get; set; } = new();
 
         public List<Hero> Heroes { get; set; } = new();
 

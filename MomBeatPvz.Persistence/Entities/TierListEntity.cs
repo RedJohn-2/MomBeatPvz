@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MomBeatPvz.Core.Model;
+using MomBeatPvz.Persistence.Entities.Abstract;
 
 namespace MomBeatPvz.Persistence.Entities
 {
-    public class TierListEntity
+    public class TierListEntity : IEntity<TierList, long>
     {
         public long Id { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MomBeatPvz.Core.Model.Abstract;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Model
 {
-    public class TierList
+    public class TierList : BaseLongModel
     {
-        public long Id { get; set; }
-
         public string Name { get; set; } = string.Empty;
 
         public string? Description { get; set; }

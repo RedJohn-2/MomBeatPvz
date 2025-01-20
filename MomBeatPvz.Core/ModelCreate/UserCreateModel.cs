@@ -1,9 +1,10 @@
 ﻿using MomBeatPvz.Core.Model;
-using MomBeatPvz.Persistence.Entities.Abstract;
+using MomBeatPvz.Core.Model.Abstract;
+using MomBeatPvz.Core.ModelCreate.Abstract;
 
-namespace MomBeatPvz.Persistence.Entities
+namespace MomBeatPvz.Core.ModelCreate
 {
-    public class UserEntity : IEntity<User, long>
+    public class UserCreateModel : ICreateModel<User>
     {
         public long Id { get; set; }
 

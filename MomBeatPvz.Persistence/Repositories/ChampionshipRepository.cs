@@ -15,11 +15,11 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Persistence.Repositories
 {
-    public class HeroRepository : 
-        BaseRepository<Hero, HeroCreateModel, HeroUpdateModel, HeroEntity, int>, 
-        IHeroStore
+    public class ChampionshipRepository :
+        BaseRepository<Championship, ChampionshipCreateModel, ChampionshipUpdateModel, ChampionshipEntity, long>,
+        IChampionshipStore
     {
-        public HeroRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
+        public ChampionshipRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
         {
         }
     }

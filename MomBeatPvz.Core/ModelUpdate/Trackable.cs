@@ -9,6 +9,7 @@ namespace MomBeatPvz.Core.ModelUpdate
     public class Trackable<T>
     {
         public T? Value { get; set; }
+
         public bool IsTracked { get; set; }
 
     }

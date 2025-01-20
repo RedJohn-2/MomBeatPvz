@@ -6,6 +6,7 @@ using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.ModelUpdate;
 using MomBeatPvz.Core.Store;
 using MomBeatPvz.Persistence.Entities;
+using MomBeatPvz.Persistence.Repositories.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,41 +15,15 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Persistence.Repositories
 {
-    public class TierListSolutionRepository : ITierListSolutionStore
+    public class TierListSolutionRepository :
+        BaseRepository<TierListSolution, TierListSolutionCreateModel, TierListSolutionUpdateModel, TierListSolutionEntity, long>,
+        ITierListSolutionStore
     {
-        private readonly ApplicationContext _db;
-        private readonly IMapper _mapper;
-
-        public TierListSolutionRepository(ApplicationContext db, IMapper mapper)
+        public TierListSolutionRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
         {
-            _db = db;
-            _mapper = mapper;
         }
 
-        public async Task Create(TierListSolutionCreateModel tierListSolution)
-        {
-            var solutionEntity = _mapper.Map<TierListSolutionEntity>(tierListSolution);
-
-            await _db.AddAsync(solutionEntity);
-
-            await _db.SaveChangesAsync();
-        }
-
-        public async Task Delete(long id)
-        {
-            await _db.TierListSolutions
-                .Where(s => s.Id == id)
-                .ExecuteDeleteAsync();
-        }
-
-        public async Task<bool> Exist(long id)
-        {
-            return await _db.TierListSolutions
-                .Where(s => s.Id == id)
-                .AnyAsync();
-        }
-
-        public async Task<IReadOnlyList<TierListSolution>> GetAll()
+        public override async Task<IReadOnlyList<TierListSolution>> GetAll()
         {
             var solutionEntities = await _db.TierListSolutions
                 .Include(s => s.Owner)
@@ -58,7 +33,7 @@ namespace MomBeatPvz.Persistence.Repositories
             return _mapper.Map<List<TierListSolution>>(solutionEntities);
         }
 
-        public async Task<TierListSolution> GetById(long id)
+        public override async Task<TierListSolution> GetById(long id)
         {
             var solutionEntity = await _db.TierListSolutions
                 .Include(s => s.Owner)
@@ -79,17 +54,17 @@ namespace MomBeatPvz.Persistence.Repositories
             return _mapper.Map<List<TierListSolution>>(solutionEntities);
         }
 
-        public async Task Update(TierListSolutionUpdateModel tierListSolution)
+        public override async Task Update(TierListSolutionUpdateModel model)
         {
             var existedSolution = await _db.TierListSolutions
-                .FirstOrDefaultAsync(s => s.Id == tierListSolution.Id)
+                .FirstOrDefaultAsync(s => s.Id == model.Id)
                 ?? throw new NotFoundException();
 
             await _db.HeroPrices
                 .Where(p => p.Solution == existedSolution)
                 .ExecuteDeleteAsync();
 
-            _mapper.Map(existedSolution, tierListSolution);
+            _mapper.Map(model, existedSolution);
 
             await _db.SaveChangesAsync();
         }

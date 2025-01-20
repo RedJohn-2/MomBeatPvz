@@ -1,5 +1,4 @@
 ﻿using MomBeatPvz.Core.Model;
-using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.Store.Abstract;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Store
 {
-    public interface IUserStore : IStore<User, UserCreateModel, UserUpdateModel, long>
+    public interface IChampionshipStore : 
+        IStore<Championship, ChampionshipCreateModel, ChampionshipUpdateModel, long>
     {
     }
 }

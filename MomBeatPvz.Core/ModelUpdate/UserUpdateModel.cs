@@ -1,6 +1,8 @@
-﻿namespace MomBeatPvz.Core.Model
+﻿using MomBeatPvz.Core.ModelUpdate.Abstract;
+
+namespace MomBeatPvz.Core.Model
 {
-    public class UserUpdateModel
+    public class UserUpdateModel : IUpdateModel<User, long>
     {
         public long Id { get; set; }
 

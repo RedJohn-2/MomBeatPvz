@@ -1,4 +1,4 @@
-﻿using MomBeatPvz.Core.Model.Abstract;
+﻿using MomBeatPvz.Core.ModelCreate.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +7,8 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Model
 {
-    public class Match : BaseLongModel
+    public class MatchCreateModel : ICreateModel<Match>
     {
         public Championship Championship { get; set; } = new();
-
-        public bool IsCompleted { get; set; }
-
-        public List<MatchResult> Results { get; set; } = new();
     }
 }

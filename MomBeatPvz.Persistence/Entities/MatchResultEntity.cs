@@ -1,13 +1,9 @@
 ﻿using MomBeatPvz.Core.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MomBeatPvz.Persistence.Entities.Abstract;
 
 namespace MomBeatPvz.Persistence.Entities
 {
-    public class MatchResultEntity
+    public class MatchResultEntity : IEntity<MatchResult, Guid>
     {
         public Guid Id { get; set; }
 

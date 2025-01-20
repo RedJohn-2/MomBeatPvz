@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MomBeatPvz.Core.Model.Abstract;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Model
 {
-    public class MatchResult
+    public class MatchResult : BaseGuidModel
     {
-        public Guid Id { get; set; }
-
         public Match Match { get; set; } = new();
 
         public Team Team { get; set; } = new();

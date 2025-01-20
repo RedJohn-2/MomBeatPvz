@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MomBeatPvz.Core.Model;
+using MomBeatPvz.Persistence.Entities.Abstract;
 
 namespace MomBeatPvz.Persistence.Entities
 {
-    public class HeroEntity
+    public class HeroEntity : IEntity<Hero, int>
     {
         public int Id { get; set; }
 
