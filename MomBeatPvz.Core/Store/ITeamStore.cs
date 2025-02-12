@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Store
 {
-    public interface ITeamStore : IStore<Team, TeamModelCreate, TeamModelUpdate, long>
+    public interface ITeamStore : IStore<Team, TeamCreateModel, TeamUpdateModel, long>
     {
     }
 }

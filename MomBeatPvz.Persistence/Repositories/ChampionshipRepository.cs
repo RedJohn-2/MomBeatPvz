@@ -22,5 +22,18 @@ namespace MomBeatPvz.Persistence.Repositories
         public ChampionshipRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
         {
         }
+
+        public async override Task<Championship> GetById(long id)
+        {
+            var existed = await _db.Championships
+                .Include(c => c.TierList)
+                .Include(c => c.Creator)
+                .Include(c => c.Heroes)
+                .Include(c => c.Matches)
+                .Include(c => c.Teams)
+                .FirstOrDefaultAsync(x => x.Id!.Equals(id));
+
+            return _mapper.Map<Championship>(existed);
+        }
     }
 }

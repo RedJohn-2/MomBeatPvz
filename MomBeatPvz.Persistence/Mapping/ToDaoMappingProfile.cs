@@ -3,11 +3,6 @@ using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.ModelUpdate;
 using MomBeatPvz.Persistence.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MomBeatPvz.Persistence.Mapping
 {
@@ -62,7 +57,83 @@ namespace MomBeatPvz.Persistence.Mapping
                     opt.MapFrom(src => src.MaxPrice.Value);
                 });
 
+            CreateMap<TeamCreateModel, TeamEntity>();
+            CreateMap<TeamUpdateModel, TeamEntity>()
+                .ForMember(dest => dest.Name, opt =>
+                {
+                    opt.PreCondition(src => src.Name.IsTracked);
+                    opt.MapFrom(src => src.Name.Value);
+                })
+                .ForMember(dest => dest.Heroes, opt =>
+                {
+                    opt.PreCondition(src => src.Heroes.IsTracked);
+                    opt.MapFrom(src => src.Heroes.Value);
+                });
+
+            CreateMap<MatchCreateModel, MatchEntity>();
+            CreateMap<MatchUpdateModel, MatchEntity>()
+                .ForMember(dest => dest.IsCompleted, opt =>
+                {
+                    opt.PreCondition(src => src.IsCompleted.IsTracked);
+                    opt.MapFrom(src => src.IsCompleted.Value);
+                })
+                .ForMember(dest => dest.Results, opt =>
+                {
+                    opt.PreCondition(src => src.Results.IsTracked);
+                    opt.MapFrom(src => src.Results.Value);
+                });
+
+            CreateMap<ChampionshipCreateModel, ChampionshipEntity>();
+            CreateMap<ChampionshipUpdateModel, ChampionshipEntity>()
+                .ForMember(dest => dest.Name, opt =>
+                {
+                    opt.PreCondition(src => src.Name.IsTracked);
+                    opt.MapFrom(src => src.Name.Value);
+                })
+                .ForMember(dest => dest.Description, opt =>
+                {
+                    opt.PreCondition(src => src.Description.IsTracked);
+                    opt.MapFrom(src => src.Description.Value);
+                })
+                .ForMember(dest => dest.TierList, opt =>
+                {
+                    opt.PreCondition(src => src.TierList.IsTracked);
+                    opt.MapFrom(src => src.TierList.Value);
+                })
+                .ForMember(dest => dest.Stage, opt =>
+                {
+                    opt.PreCondition(src => src.Stage.IsTracked);
+                    opt.MapFrom(src => src.Stage.Value);
+                })
+                .ForMember(dest => dest.StartDate, opt =>
+                {
+                    opt.PreCondition(src => src.StartDate.IsTracked);
+                    opt.MapFrom(src => src.StartDate.Value);
+                })
+                .ForMember(dest => dest.EndDate, opt =>
+                {
+                    opt.PreCondition(src => src.EndDate.IsTracked);
+                    opt.MapFrom(src => src.EndDate.Value);
+                })
+                .ForMember(dest => dest.Teams, opt =>
+                {
+                    opt.PreCondition(src => src.Teams.IsTracked);
+                    opt.MapFrom(src => src.Teams.Value);
+                })
+                .ForMember(dest => dest.Matches, opt =>
+                {
+                    opt.PreCondition(src => src.Matches.IsTracked);
+                    opt.MapFrom(src => src.Matches.Value);
+                })
+                .ForMember(dest => dest.Heroes, opt =>
+                {
+                    opt.PreCondition(src => src.Heroes.IsTracked);
+                    opt.MapFrom(src => src.Heroes.Value);
+                });
+
             CreateMap<HeroPrice, HeroPriceEntity>();
+            CreateMap<MatchResult, MatchResultEntity>();
+
         }
     }
 }

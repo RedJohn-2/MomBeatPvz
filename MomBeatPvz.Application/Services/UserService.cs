@@ -1,6 +1,7 @@
 ﻿using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Core.Model;
+using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.Store;
 using System.Security.Authentication;
 using System.Security.Claims;
@@ -48,7 +49,7 @@ namespace MomBeatPvz.Application.Services
                         Name = username
                     };
 
-                    await _userStore.Create(existedUser);
+                    await _userStore.Create(new UserCreateModel { Id = existedUser.Id, Name = existedUser.Name});
                 }
 
                 return _jwtProvider.GenerateAccessToken(existedUser);

@@ -16,8 +16,6 @@ namespace MomBeatPvz.Core.Model
 
         public ChampionshipFormat Format { get; set; }
 
-        public TierList? TierList { get; set; }
-
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }

@@ -16,11 +16,21 @@ using System.Threading.Tasks;
 namespace MomBeatPvz.Persistence.Repositories
 {
     public class TeamRepository :
-        BaseRepository<Team, TeamModelCreate, TeamModelUpdate, TeamEntity, long>,
+        BaseRepository<Team, TeamCreateModel, TeamUpdateModel, TeamEntity, long>,
         ITeamStore
     {
         public TeamRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
         {
+        }
+
+        public async override Task<Team> GetById(long id)
+        {
+            var existed = await _db.Teams
+                .Include(t => t.Author)
+                .Include(t => t.Heroes)
+                .FirstOrDefaultAsync(x => x.Id!.Equals(id));
+
+            return _mapper.Map<Team>(existed);
         }
     }
 }

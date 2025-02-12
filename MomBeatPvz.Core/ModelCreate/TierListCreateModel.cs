@@ -20,6 +20,8 @@ namespace MomBeatPvz.Core.ModelCreate
 
         public DateTime Created { get; set; }
 
+        public Championship Championship { get; set; } = new();
+
         public User Creator { get; set; } = new();
     }
 }

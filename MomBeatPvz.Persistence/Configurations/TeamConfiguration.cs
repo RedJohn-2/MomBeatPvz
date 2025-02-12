@@ -16,6 +16,8 @@ namespace MomBeatPvz.Persistence.Configurations
         {
             builder.HasKey(t => t.Id);
 
+            builder.HasAlternateKey(t => new { t.AuthorId, t.ChampionshipId });
+
             builder.Property(t => t.Name).HasMaxLength(30);
 
             builder

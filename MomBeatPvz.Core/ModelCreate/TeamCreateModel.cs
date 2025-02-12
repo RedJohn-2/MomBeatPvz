@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Model
 {
-    public class TeamModelCreate : ICreateModel<Team>
+    public class TeamCreateModel : ICreateModel<Team>
     {
         public string Name { get; set; } = string.Empty;
 

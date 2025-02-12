@@ -16,7 +16,7 @@ using System.Xml.Linq;
 namespace MomBeatPvz.Persistence.Repositories
 {
     public class TierListRepository : 
-        BaseRepository<TierList, TierListCreateModel, TierListUpdateModel, TierListEntity, long>
+        BaseRepository<TierList, TierListCreateModel, TierListUpdateModel, TierListEntity, long>,
         ITierListStore
     {
         public TierListRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)

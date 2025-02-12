@@ -36,7 +36,7 @@ namespace MomBeatPvz.Persistence.Repositories.Abstract
         {
             var entity = _mapper.Map<E>(model);
 
-            await _db.AddAsync(entity);
+            _db.Attach(entity);
 
             await _db.SaveChangesAsync();
         }

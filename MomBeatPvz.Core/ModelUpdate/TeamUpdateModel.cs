@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Core.Model
 {
-    public class TeamModelUpdate : IUpdateModel<Team, long>
+    public class TeamUpdateModel : IUpdateModel<Team, long>
     {
         public long Id { get; set; }
 

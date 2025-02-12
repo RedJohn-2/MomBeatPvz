@@ -9,8 +9,6 @@ namespace MomBeatPvz.Core.Model
 {
     public class HeroPrice : BaseGuidModel
     {
-        public Guid Id { get; set; }
-
         public Hero Hero { get; set; } = new();
 
         public int Value { get; set; }

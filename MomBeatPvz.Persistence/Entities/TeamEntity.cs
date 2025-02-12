@@ -14,5 +14,9 @@ namespace MomBeatPvz.Persistence.Entities
         public List<HeroEntity> Heroes { get; set; } = new();
 
         public ChampionshipEntity Championship { get; set; } = new();
+
+        public long AuthorId {  get; set; }
+
+        public long ChampionshipId { get; set; }
     }
 }

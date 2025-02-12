@@ -33,6 +33,30 @@ namespace MomBeatPvz.Api.Extentions
             return services;
         }
 
+        public static IServiceCollection AddChampionshipServices(this IServiceCollection services)
+        {
+            services.AddScoped<IChampionshipStore, ChampionshipRepository>();
+            services.AddScoped<IChampionshipService, ChampionshipService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddMatchServices(this IServiceCollection services)
+        {
+            services.AddScoped<IMatchStore, MatchRepository>();
+            services.AddScoped<IMatchService, MatchService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddTeamServices(this IServiceCollection services)
+        {
+            services.AddScoped<ITeamStore, TeamRepository>();
+            services.AddScoped<ITeamService, TeamService>();
+
+            return services;
+        }
+
         public static IServiceCollection AddUnitOfWork(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -74,7 +98,7 @@ namespace MomBeatPvz.Api.Extentions
             {
                 opt.AddPolicy("Admin", policy =>
                 {
-                    policy.RequireClaim("isAdmim", "True");
+                    policy.RequireClaim("admin", "True");
                 });
 
             });

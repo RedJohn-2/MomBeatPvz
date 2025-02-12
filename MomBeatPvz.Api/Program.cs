@@ -1,13 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using MomBeatPvz.Api.BackgroundServices;
 using MomBeatPvz.Api.Extentions;
+using MomBeatPvz.Api.Mapping;
 using MomBeatPvz.Infrastructure.Auth;
 using MomBeatPvz.Persistence;
 using MomBeatPvz.Persistence.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAutoMapper(typeof(ToDaoMappingProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(ToDaoMappingProfile).Assembly, typeof(ToDtoMappingProfile).Assembly);
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
@@ -20,9 +22,13 @@ builder.Services.AddUnitOfWork();
 builder.Services.AddUserServices();
 builder.Services.AddHeroServices();
 builder.Services.AddTierListServices();
+builder.Services.AddTeamServices();
+builder.Services.AddMatchServices();
+builder.Services.AddChampionshipServices();
 
 builder.Services.AddAuthenticationServices(builder.Configuration);
 
+/*builder.Services.AddHostedService<RecalculateTierListPricesBackgroundService>();*/
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -35,7 +41,7 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "¬ведите 'Bearer' [пробел] и токен",
+        Description = "¬ведите токен",
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",

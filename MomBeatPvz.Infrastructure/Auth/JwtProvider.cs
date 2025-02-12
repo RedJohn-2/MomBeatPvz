@@ -25,7 +25,7 @@ namespace MomBeatPvz.Infrastructure.Auth
             List<Claim> claims = [
                 new("user_id", user.Id.ToString()),
                 new("name", user.Name),
-                new("isAdmim", user.IsAdmin.ToString())
+                new("admin", user.IsAdmin.ToString())
             ];
 
             var signingCredentials = new SigningCredentials(

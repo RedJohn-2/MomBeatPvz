@@ -12,5 +12,9 @@ namespace MomBeatPvz.Persistence.Entities
         public UserEntity Owner { get; set; } = new();
 
         public List<HeroPriceEntity> HeroPrices { get; set; } = new();
+
+        public long TierListId { get; set; }
+
+        public long OwnerId { get; set; }
     }
 }

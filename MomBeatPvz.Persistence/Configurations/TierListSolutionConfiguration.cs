@@ -16,6 +16,8 @@ namespace MomBeatPvz.Persistence.Configurations
         {
             builder.HasKey(s => s.Id);
 
+            builder.HasAlternateKey(s => new { s.OwnerId, s.TierListId }); 
+
             builder.
                 HasOne(s => s.Owner)
                 .WithMany();
