@@ -32,12 +32,12 @@ namespace MomBeatPvz.Application.Services
         {
             return await _unitOfWork.InTransaction(async () =>
             {
-                var authValid = _hashProvider.IsValid(id, username, expired, hash);
+                /*var authValid = _hashProvider.IsValid(id, username, expired, hash);
 
                 if (!authValid) 
                 {
                     throw new AuthenticationException();
-                }
+                }*/
 
                 var existedUser = await _userStore.GetById(id);
 

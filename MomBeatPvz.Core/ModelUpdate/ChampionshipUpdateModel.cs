@@ -25,10 +25,10 @@ namespace MomBeatPvz.Core.Model
 
         public Trackable<DateTime?> EndDate { get; set; } = new();
 
-        public Trackable<List<Team>> Teams { get; set; } = new();
+        public List<Team> Teams { get; set; } = new();
 
-        public Trackable<List<Match>> Matches { get; set; } = new();
+        public List<Match> Matches { get; set; } = new();
 
-        public Trackable<List<Hero>> Heroes { get; set; } = new();
+        public List<Hero> Heroes { get; set; } = new();
     }
 }
