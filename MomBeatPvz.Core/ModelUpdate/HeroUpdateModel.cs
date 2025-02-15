@@ -13,8 +13,8 @@ namespace MomBeatPvz.Core.ModelUpdate
     {
         public int Id { get; set; }
 
-        public Trackable<string> Name { get; set; } = new();
+        public string? Name { get; set; }
 
-        public Trackable<string> Url { get; set; } = new();
+        public string? Url { get; set; }
     }
 }

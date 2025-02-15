@@ -16,5 +16,10 @@ namespace MomBeatPvz.Persistence.Repositories
         public UserRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
         {
         }
+
+        public override Task Update(UserUpdateModel model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

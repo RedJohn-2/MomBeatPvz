@@ -13,12 +13,14 @@ namespace MomBeatPvz.Core.ModelCreate
     {
         public long Id { get; set; }
 
-        public Trackable<string> Name { get; set; } = new();
+        public long AuthorId { get; set; }
 
-        public Trackable<string?> Description { get; set; } = new();
+        public string? Name { get; set; }
 
-        public Trackable<int> MinPrice { get; set; } = new();
+        public string? Description { get; set; }
 
-        public Trackable<int> MaxPrice { get; set; } = new();
+        public Trackable<int>? MinPrice { get; set; }
+
+        public Trackable<int>? MaxPrice { get; set; }
     }
 }

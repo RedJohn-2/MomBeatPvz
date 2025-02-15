@@ -4,9 +4,9 @@ using MomBeatPvz.Core.Model;
 
 namespace MomBeatPvz.Api.Contracts.TierListSolution
 {
-    public record TierListSolutionResponse(
+    public record TierListSolutionResponseDto(
         long Id,
         long TierListId,
-        UserResponse Owner,
-        Dictionary<HeroResponse, int> Prices);
+        UserResponseDto Owner,
+        Dictionary<HeroResponseDto, int> Prices);
 }

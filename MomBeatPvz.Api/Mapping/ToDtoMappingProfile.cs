@@ -16,28 +16,28 @@ namespace MomBeatPvz.Api.Mapping
     {
         public ToDtoMappingProfile()
         {
-            CreateMap<Hero, HeroResponse>();
+            CreateMap<Hero, HeroResponseDto>();
 
-            CreateMap<User, UserResponse>();
+            CreateMap<User, UserResponseDto>();
 
-            CreateMap<TierListSolution, TierListSolutionResponse>()
+            CreateMap<TierListSolution, TierListSolutionResponseDto>()
                 .ForMember(dest => dest.TierListId, opt => opt.MapFrom(src => src.TierList.Id))
                 .ForMember(dest => dest.Prices, opt => 
                                                 opt.MapFrom(src => src.Prices
                                                 .ToDictionary(
-                                                    x => new HeroResponse(x.Hero.Id, x.Hero.Name, x.Hero.Url), 
+                                                    x => new HeroResponseDto(x.Hero.Id, x.Hero.Name, x.Hero.Url), 
                                                     x => x.Value)));
 
-            CreateMap<TierList, TierListResponse>()
+            CreateMap<TierList, TierListResponseDto>()
                 .ForMember(dest => dest.ChampionshipId, opt => opt.MapFrom(src => src.Championship.Id));
 
-            CreateMap<TierList, TierListRowResponse>()
+            CreateMap<TierList, TierListRowResponseDto>()
                 .ForMember(dest => dest.ChampionshipId, opt => opt.MapFrom(src => src.Championship.Id));
 
-            CreateMap<Team, TeamResponse>()
+            CreateMap<Team, TeamResponseDto>()
                 .ForMember(dest => dest.ChampionshipId, opt => opt.MapFrom(src => src.Championship.Id));
 
-            CreateMap<Match, MatchResponse>()
+            CreateMap<Match, MatchResponseDto>()
                 .ForMember(dest => dest.ChampionshipId, opt => opt.MapFrom(src => src.Championship.Id))
                 .ForMember(dest => dest.Results, opt =>
                                                 opt.MapFrom(src => src.Results

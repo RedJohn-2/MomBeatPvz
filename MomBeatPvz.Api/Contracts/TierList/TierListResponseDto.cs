@@ -3,15 +3,15 @@ using MomBeatPvz.Api.Contracts.User;
 
 namespace MomBeatPvz.Api.Contracts.TierList
 {
-    public record TierListResponse(
+    public record TierListResponseDto(
         long Id,
         string Name,
         string Description,
         int MinPrice,
         int MaxPrice,
-        List<TierListSolutionResponse> Solutions,
-        TierListSolutionResponse Result,
+        List<TierListSolutionResponseDto> Solutions,
+        TierListSolutionResponseDto Result,
         DateTime Created,
         long ChampionshipId,
-        UserResponse Creator);
+        UserResponseDto Creator);
 }

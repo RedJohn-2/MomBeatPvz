@@ -12,8 +12,8 @@ namespace MomBeatPvz.Core.ModelUpdate
     {
         public long Id { get; set; }
 
-        public Trackable<bool> IsCompleted { get; set; } = new();
+        public Trackable<bool>? IsCompleted { get; set; }
 
-        public Trackable<List<MatchResult>> Results { get; set; } = new();
+        public List<MatchResult>? Results { get; set; }
     }
 }

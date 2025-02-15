@@ -2,6 +2,7 @@
 using MomBeatPvz.Core.ModelCreate.Abstract;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace MomBeatPvz.Core.ModelCreate
     {
         public string Name { get; set; } = string.Empty;
 
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public int MinPrice { get; set; }
 

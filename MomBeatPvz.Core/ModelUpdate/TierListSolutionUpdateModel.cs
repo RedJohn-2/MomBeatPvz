@@ -12,6 +12,8 @@ namespace MomBeatPvz.Core.ModelUpdate
     {
         public long Id { get; set; }
 
-        public Trackable<List<HeroPrice>> HeroPrices { get; set; } = new();
+        public long AuthorId { get; set; }
+
+        public List<HeroPrice>? HeroPrices { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace MomBeatPvz.Core.Model
     {
         public string Name { get; set; } = string.Empty;
 
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public int MinPrice { get; set; }
 

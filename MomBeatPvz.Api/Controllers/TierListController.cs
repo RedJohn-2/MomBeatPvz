@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MomBeatPvz.Api.Contracts.Championship;
+using MomBeatPvz.Api.Contracts.TierList;
+using MomBeatPvz.Api.Contracts.User;
 using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Services;
 using MomBeatPvz.Core.Model;
@@ -13,16 +17,31 @@ namespace MomBeatPvz.Api.Controllers
     public class TierListController : ControllerBase
     {
         private readonly ITierListService _tierListService;
+        private readonly IMapper _mapper;
 
-        public TierListController(ITierListService tierListService)
+        public TierListController(ITierListService tierListService, IMapper mapper)
         {
             _tierListService = tierListService;
+            _mapper = mapper;
         }
 
         [HttpPost("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Create(TierListCreateModel model)
+        public async Task<ActionResult> Create(TierListCreateRequestDto dto)
         {
+            var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);
+
+            var model = new TierListCreateModel
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                MinPrice = dto.MinPrice,
+                MaxPrice = dto.MaxPrice,
+                Created = DateTime.UtcNow,
+                Championship = new Championship { Id = dto.ChampionshipId },
+                Creator = new User { Id = userId }
+            };
+
             await _tierListService.CreateAsync(model);
 
             return Ok();
@@ -33,13 +52,25 @@ namespace MomBeatPvz.Api.Controllers
         {
             var tierList = await _tierListService.GetByIdAsync(id);
 
-            return Ok(tierList);
+            return Ok(_mapper.Map<TierListResponseDto>(tierList));
         }
 
         [HttpPut("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Update(TierListUpdateModel model)
+        public async Task<ActionResult> Update(TierListUpdateRequestDto dto)
         {
+            var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);
+
+            var model = new TierListUpdateModel
+            {
+                Id = dto.Id,
+                AuthorId = userId,
+                Name = dto.Name,
+                Description = dto.Description,
+                MinPrice = dto.MinPrice,
+                MaxPrice = dto.MaxPrice
+            };
+
             await _tierListService.UpdateAsync(model);
 
             return Ok();

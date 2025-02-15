@@ -4,10 +4,10 @@ using MomBeatPvz.Core.Model;
 
 namespace MomBeatPvz.Api.Contracts.Team
 {
-    public record TeamResponse(
+    public record TeamResponseDto(
         long Id,
         string Name,
-        UserResponse Author,
-        HeroResponse[] Heroes,
+        UserResponseDto Author,
+        HeroResponseDto[] Heroes,
         long ChampionshipId);
 }

@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MomBeatPvz.Api.Contracts.Championship;
+using MomBeatPvz.Api.Contracts.Hero;
 using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Services;
 using MomBeatPvz.Core.Model;
@@ -13,16 +16,24 @@ namespace MomBeatPvz.Api.Controllers
     public class HeroController : ControllerBase
     {
         private readonly IHeroService _heroService;
+        private readonly IMapper _mapper;
 
-        public HeroController(IHeroService heroService)
+        public HeroController(IHeroService heroService, IMapper mapper)
         {
             _heroService = heroService;
+            _mapper = mapper;
         }
 
         [HttpPost("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Create(HeroCreateModel model)
+        public async Task<ActionResult> Create(HeroCreateRequestDto dto)
         {
+            var model = new HeroCreateModel
+            {
+                Name = dto.Name,
+                Url = dto.Url
+            };
+
             await _heroService.CreateAsync(model);
 
             return Ok();
@@ -33,13 +44,20 @@ namespace MomBeatPvz.Api.Controllers
         {
             var hero = await _heroService.GetByIdAsync(id);
 
-            return Ok(hero);
+            return Ok(_mapper.Map<HeroResponseDto>(hero));
         }
 
         [HttpPut("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Update(HeroUpdateModel model)
+        public async Task<ActionResult> Update(HeroUpdateRequestDto dto)
         {
+            var model = new HeroUpdateModel
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                Url = dto.Url
+            };
+
             await _heroService.UpdateAsync(model);
 
             return Ok();
@@ -50,7 +68,7 @@ namespace MomBeatPvz.Api.Controllers
         {
             var heros = await _heroService.GetAllAsync();
 
-            return Ok(heros);
+            return Ok(_mapper.Map<IReadOnlyList<HeroResponseDto>>(heros));
         }
     }
 }

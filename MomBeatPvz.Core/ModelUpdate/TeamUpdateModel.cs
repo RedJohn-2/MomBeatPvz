@@ -13,8 +13,10 @@ namespace MomBeatPvz.Core.Model
     {
         public long Id { get; set; }
 
-        public Trackable<string> Name { get; set; } = new();
+        public long AuthorId { get; set; }
 
-        public Trackable<List<Hero>> Heroes { get; set; } = new();
+        public string? Name { get; set; }
+
+        public List<Hero>? Heroes { get; set; }
     }
 }

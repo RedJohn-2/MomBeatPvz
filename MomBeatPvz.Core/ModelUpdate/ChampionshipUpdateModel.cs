@@ -13,22 +13,22 @@ namespace MomBeatPvz.Core.Model
     {
         public long Id { get; set; }
 
-        public Trackable<string> Name { get; set; } = new();
+        public long AuthorId { get; set; }
 
-        public Trackable<string> Description { get; set; } = new();
+        public string? Name { get; set; }
 
-        public Trackable<ChampionshipStage> Stage { get; set; } = new();
+        public string? Description { get; set; }
 
-        public Trackable<TierList?> TierList { get; set; } = new();
+        public Trackable<ChampionshipStage>? Stage { get; set; }
 
-        public Trackable<DateTime?> StartDate { get; set; } = new();
+        public Trackable<DateTime?>? StartDate { get; set; }
 
-        public Trackable<DateTime?> EndDate { get; set; } = new();
+        public Trackable<DateTime?>? EndDate { get; set; }
 
-        public List<Team> Teams { get; set; } = new();
+        public List<Team>? Teams { get; set; }
 
-        public List<Match> Matches { get; set; } = new();
+        public List<Match>? Matches { get; set; }
 
-        public List<Hero> Heroes { get; set; } = new();
+        public List<Hero>? Heroes { get; set; }
     }
 }

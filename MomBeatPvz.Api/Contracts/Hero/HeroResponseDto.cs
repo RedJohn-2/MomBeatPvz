@@ -1,6 +1,6 @@
 ﻿namespace MomBeatPvz.Api.Contracts.Hero
 {
-    public record HeroResponse(
+    public record HeroResponseDto(
         int Id,
         string Name,
         string Url);
