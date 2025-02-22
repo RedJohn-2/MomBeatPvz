@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MomBeatPvz.Persistence;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MomBeatPvz.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250221202709_Tet")]
+    partial class Tet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,15 +87,9 @@ namespace MomBeatPvz.Persistence.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("TierListId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
-
-                    b.HasIndex("TierListId")
-                        .IsUnique();
 
                     b.ToTable("Championship", (string)null);
                 });
@@ -219,12 +216,6 @@ namespace MomBeatPvz.Persistence.Migrations
             modelBuilder.Entity("MomBeatPvz.Persistence.Entities.TierListEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("ChampionshipId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("Created")
@@ -248,7 +239,7 @@ namespace MomBeatPvz.Persistence.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
 
-                    b.Property<long?>("ResultId")
+                    b.Property<long>("ResultId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -342,13 +333,7 @@ namespace MomBeatPvz.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MomBeatPvz.Persistence.Entities.TierListEntity", "TierList")
-                        .WithOne("Championship")
-                        .HasForeignKey("MomBeatPvz.Persistence.Entities.ChampionshipEntity", "TierListId");
-
                     b.Navigation("Creator");
-
-                    b.Navigation("TierList");
                 });
 
             modelBuilder.Entity("MomBeatPvz.Persistence.Entities.HeroPriceEntity", b =>
@@ -427,9 +412,19 @@ namespace MomBeatPvz.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MomBeatPvz.Persistence.Entities.ChampionshipEntity", "Championship")
+                        .WithOne("TierList")
+                        .HasForeignKey("MomBeatPvz.Persistence.Entities.TierListEntity", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MomBeatPvz.Persistence.Entities.TierListSolutionEntity", "Result")
                         .WithMany()
-                        .HasForeignKey("ResultId");
+                        .HasForeignKey("ResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Championship");
 
                     b.Navigation("Creator");
 
@@ -460,6 +455,8 @@ namespace MomBeatPvz.Persistence.Migrations
                     b.Navigation("Matches");
 
                     b.Navigation("Teams");
+
+                    b.Navigation("TierList");
                 });
 
             modelBuilder.Entity("MomBeatPvz.Persistence.Entities.MatchEntity", b =>
@@ -469,9 +466,6 @@ namespace MomBeatPvz.Persistence.Migrations
 
             modelBuilder.Entity("MomBeatPvz.Persistence.Entities.TierListEntity", b =>
                 {
-                    b.Navigation("Championship")
-                        .IsRequired();
-
                     b.Navigation("Solutions");
                 });
 

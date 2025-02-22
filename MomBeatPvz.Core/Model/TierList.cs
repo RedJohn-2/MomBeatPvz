@@ -19,7 +19,7 @@ namespace MomBeatPvz.Core.Model
 
         public List<TierListSolution> Solutions { get; set; } = new();
 
-        public TierListSolution Result { get; set; } = new();
+        public TierListSolution? Result { get; set; }
 
         public DateTime Created { get; set; }
 

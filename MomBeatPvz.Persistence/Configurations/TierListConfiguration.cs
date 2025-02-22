@@ -27,7 +27,7 @@ namespace MomBeatPvz.Persistence.Configurations
             builder
                 .HasOne(t => t.Championship)
                 .WithOne(c => c.TierList)
-                .HasForeignKey<ChampionshipEntity>(c => c.Id);
+                .HasForeignKey<TierListEntity>(t => t.ChampionshipId);
 
             builder.Property(t => t.Name).HasMaxLength(80);
 

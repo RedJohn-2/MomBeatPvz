@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MomBeatPvz.Persistence;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MomBeatPvz.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250221202239_Adding")]
+    partial class Adding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,10 +58,7 @@ namespace MomBeatPvz.Persistence.Migrations
             modelBuilder.Entity("MomBeatPvz.Persistence.Entities.ChampionshipEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<long>("CreatorId")
                         .HasColumnType("bigint");
@@ -84,15 +84,9 @@ namespace MomBeatPvz.Persistence.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("TierListId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
-
-                    b.HasIndex("TierListId")
-                        .IsUnique();
 
                     b.ToTable("Championship", (string)null);
                 });
@@ -224,9 +218,6 @@ namespace MomBeatPvz.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("ChampionshipId")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
 
@@ -248,7 +239,7 @@ namespace MomBeatPvz.Persistence.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
 
-                    b.Property<long?>("ResultId")
+                    b.Property<long>("ResultId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -344,7 +335,9 @@ namespace MomBeatPvz.Persistence.Migrations
 
                     b.HasOne("MomBeatPvz.Persistence.Entities.TierListEntity", "TierList")
                         .WithOne("Championship")
-                        .HasForeignKey("MomBeatPvz.Persistence.Entities.ChampionshipEntity", "TierListId");
+                        .HasForeignKey("MomBeatPvz.Persistence.Entities.ChampionshipEntity", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Creator");
 
@@ -429,7 +422,9 @@ namespace MomBeatPvz.Persistence.Migrations
 
                     b.HasOne("MomBeatPvz.Persistence.Entities.TierListSolutionEntity", "Result")
                         .WithMany()
-                        .HasForeignKey("ResultId");
+                        .HasForeignKey("ResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Creator");
 

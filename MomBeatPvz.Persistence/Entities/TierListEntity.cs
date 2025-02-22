@@ -17,12 +17,14 @@ namespace MomBeatPvz.Persistence.Entities
 
         public List<TierListSolutionEntity> Solutions { get; set; } = new();
 
-        public TierListSolutionEntity Result { get; set; } = new();
+        public TierListSolutionEntity? Result { get; set; }
 
         public DateTime Created { get; set; }
 
         public UserEntity Creator { get; set; } = new();
 
         public ChampionshipEntity Championship { get; set; } = new();
+
+        public long ChampionshipId { get; set; }
     }
 }

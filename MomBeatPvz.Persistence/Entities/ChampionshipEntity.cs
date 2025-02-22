@@ -23,6 +23,8 @@ namespace MomBeatPvz.Persistence.Entities
 
         public TierListEntity? TierList { get; set; }
 
+        public long? TierListId { get; set; }
+
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }

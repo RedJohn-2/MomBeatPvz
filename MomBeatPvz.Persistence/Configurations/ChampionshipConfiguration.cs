@@ -19,10 +19,6 @@ namespace MomBeatPvz.Persistence.Configurations
             builder.Property(c => c.Name).HasMaxLength(30);
 
             builder
-                .HasOne(c => c.TierList)
-                .WithOne(t => t.Championship);
-
-            builder
                 .HasMany(c => c.Teams)
                 .WithOne(t => t.Championship);
 
@@ -37,6 +33,11 @@ namespace MomBeatPvz.Persistence.Configurations
             builder
                 .HasOne(c => c.Creator)
                 .WithMany();
+
+            builder
+                .HasOne(c => c.TierList)
+                .WithOne(t => t.Championship)
+                .HasForeignKey<ChampionshipEntity>(c => c.TierListId);
 
             builder.ToTable(nameof(Championship));
         }

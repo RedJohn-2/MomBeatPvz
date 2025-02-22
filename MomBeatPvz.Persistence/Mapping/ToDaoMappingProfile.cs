@@ -10,7 +10,11 @@ namespace MomBeatPvz.Persistence.Mapping
     {
         public ToDaoMappingProfile()
         {
+            CreateMap<HeroPrice, HeroPriceEntity>();
+            CreateMap<MatchResult, MatchResultEntity>();
+
             CreateMap<HeroCreateModel, HeroEntity>();
+            CreateMap<Hero, HeroEntity>();
             CreateMap<HeroUpdateModel, HeroEntity>()
                 .ForMember(dest => dest.Name, opt =>
                 {
@@ -27,6 +31,7 @@ namespace MomBeatPvz.Persistence.Mapping
             CreateMap<UserUpdateModel, UserEntity>();
 
             CreateMap<TierListSolutionCreateModel, TierListSolutionEntity>();
+            CreateMap<TierListSolution, TierListSolutionEntity>();
             CreateMap<TierListSolutionUpdateModel, TierListSolutionEntity>()
                 .ForMember(dest => dest.HeroPrices, opt =>
                 {
@@ -35,6 +40,7 @@ namespace MomBeatPvz.Persistence.Mapping
                 });
 
             CreateMap<TierListCreateModel, TierListEntity>();
+            CreateMap<TierList, TierListEntity>();
             CreateMap<TierListUpdateModel, TierListEntity>()
                 .ForMember(dest => dest.Name, opt =>
                 {
@@ -58,6 +64,7 @@ namespace MomBeatPvz.Persistence.Mapping
                 });
 
             CreateMap<TeamCreateModel, TeamEntity>();
+            CreateMap<Team, TeamEntity>();
             CreateMap<TeamUpdateModel, TeamEntity>()
                 .ForMember(dest => dest.Name, opt =>
                 {
@@ -71,6 +78,7 @@ namespace MomBeatPvz.Persistence.Mapping
                 });
 
             CreateMap<MatchCreateModel, MatchEntity>();
+            CreateMap<Match, MatchEntity>();
             CreateMap<MatchUpdateModel, MatchEntity>()
                 .ForMember(dest => dest.IsCompleted, opt =>
                 {
@@ -84,6 +92,7 @@ namespace MomBeatPvz.Persistence.Mapping
                 });
 
             CreateMap<ChampionshipCreateModel, ChampionshipEntity>();
+            CreateMap<Championship, ChampionshipEntity>();
             CreateMap<ChampionshipUpdateModel, ChampionshipEntity>()
                 .ForMember(dest => dest.Name, opt =>
                 {
@@ -125,9 +134,6 @@ namespace MomBeatPvz.Persistence.Mapping
                     opt.PreCondition(src => src.Heroes is not null);
                     opt.MapFrom(src => src.Heroes);
                 });
-
-            CreateMap<HeroPrice, HeroPriceEntity>();
-            CreateMap<MatchResult, MatchResultEntity>();
 
         }
     }
