@@ -23,6 +23,60 @@ namespace MomBeatPvz.Persistence.Repositories
         {
         }
 
+        public async override Task Update(ChampionshipUpdateModel model)
+        {
+            var existed = await _db.Championships.Include(x => x.Heroes).FirstOrDefaultAsync(x => x.Id!.Equals(model.Id))
+                ?? throw new NotFoundException();
+
+            _mapper.Map(model, existed);
+
+            if (model.Heroes is not null)
+            {
+                var existedHeroIds = existed.Heroes.Select(x => x.Id).ToArray();
+
+                var newHeroIds = model.Heroes.Select(x => x.Id).ToArray();
+
+                existed.Heroes.RemoveAll(x => !newHeroIds.Contains(x.Id));
+
+                existed.Heroes.AddRange(newHeroIds
+                    .Where(x => !existedHeroIds.Contains(x))
+                    .Select(x => new HeroEntity { Id = x})
+                    .ToList());
+            }
+
+            if (model.Matches is not null)
+            {
+                var existedMatchIds = existed.Matches.Select(x => x.Id).ToArray();
+
+                var newMatchIds = model.Matches.Select(x => x.Id).ToArray();
+
+                existed.Matches.RemoveAll(x => !newMatchIds.Contains(x.Id));
+
+                existed.Matches.AddRange(newMatchIds
+                    .Where(x => !existedMatchIds.Contains(x))
+                    .Select(x => new MatchEntity { Id = x })
+                    .ToList());
+            }
+
+            if (model.Teams is not null)
+            {
+                var existedTeamIds = existed.Teams.Select(x => x.Id).ToArray();
+
+                var newTeamIds = model.Teams.Select(x => x.Id).ToArray();
+
+                existed.Teams.RemoveAll(x => !newTeamIds.Contains(x.Id));
+
+                existed.Teams.AddRange(newTeamIds
+                    .Where(x => !existedTeamIds.Contains(x))
+                    .Select(x => new TeamEntity { Id = x })
+                    .ToList());
+            }
+
+            var entries = _db.ChangeTracker.Entries();
+
+            await _db.SaveChangesAsync();
+        }
+
         public async override Task<Championship> GetById(long id)
         {
             var existed = await _db.Championships

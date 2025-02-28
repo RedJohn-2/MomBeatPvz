@@ -27,6 +27,7 @@ namespace MomBeatPvz.Persistence.Mapping
                     opt.MapFrom(src => src.Url);
                 });
 
+            CreateMap<UserCreateModel, UserEntity>();
             CreateMap<User, UserEntity>();
             CreateMap<UserUpdateModel, UserEntity>();
 
@@ -119,21 +120,9 @@ namespace MomBeatPvz.Persistence.Mapping
                     opt.PreCondition(src => src.EndDate is not null);
                     opt.MapFrom(src => src.EndDate!.Value);
                 })
-                .ForMember(dest => dest.Teams, opt =>
-                {
-                    opt.PreCondition(src => src.Teams is not null);
-                    opt.MapFrom(src => src.Teams);
-                })
-                .ForMember(dest => dest.Matches, opt =>
-                {
-                    opt.PreCondition(src => src.Matches is not null);
-                    opt.MapFrom(src => src.Matches);
-                })
-                .ForMember(dest => dest.Heroes, opt =>
-                {
-                    opt.PreCondition(src => src.Heroes is not null);
-                    opt.MapFrom(src => src.Heroes);
-                });
+                .ForMember(dest => dest.Teams, opt => opt.Ignore())
+                .ForMember(dest => dest.Matches, opt => opt.Ignore())
+                .ForMember(dest => dest.Heroes, opt => opt.Ignore());
 
         }
     }

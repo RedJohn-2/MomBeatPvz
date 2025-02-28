@@ -31,6 +31,8 @@ namespace MomBeatPvz.Api.Controllers
         {
             var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);
 
+            var creator = new User { Id = userId };
+
             var model = new TierListCreateModel
             {
                 Name = dto.Name,
@@ -38,8 +40,8 @@ namespace MomBeatPvz.Api.Controllers
                 MinPrice = dto.MinPrice,
                 MaxPrice = dto.MaxPrice,
                 Created = DateTime.UtcNow,
-                Championship = new Championship { Id = dto.ChampionshipId },
-                Creator = new User { Id = userId }
+                Championship = new Championship { Id = dto.ChampionshipId, Creator = creator },
+                Creator = creator
             };
 
             await _tierListService.CreateAsync(model);

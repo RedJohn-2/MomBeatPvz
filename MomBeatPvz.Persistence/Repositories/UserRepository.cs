@@ -21,5 +21,14 @@ namespace MomBeatPvz.Persistence.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public override async Task Create(UserCreateModel model)
+        {
+            var entity = _mapper.Map<UserEntity>(model);
+
+            await _db.AddAsync(entity);
+
+            await _db.SaveChangesAsync();
+        }
     }
 }

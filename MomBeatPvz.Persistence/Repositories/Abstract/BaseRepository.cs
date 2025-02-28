@@ -36,7 +36,9 @@ namespace MomBeatPvz.Persistence.Repositories.Abstract
         {
             var entity = _mapper.Map<E>(model);
 
-            _db.Attach(entity);
+            _db.GetDbSet<E>().Attach(entity);
+
+            var entries = _db.ChangeTracker.Entries();
 
             await _db.SaveChangesAsync();
         }
@@ -77,6 +79,8 @@ namespace MomBeatPvz.Persistence.Repositories.Abstract
                 ?? throw new NotFoundException();
 
             _mapper.Map(model, existed);
+
+            var entries = _db.ChangeTracker.Entries();
 
             await _db.SaveChangesAsync();
         }
