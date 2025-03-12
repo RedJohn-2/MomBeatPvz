@@ -8,6 +8,6 @@ namespace MomBeatPvz.Api.Contracts.Championship
         long Id,
         string? Name,
         string? Description,
-        Trackable<int>? MinPrice,
-        Trackable<int>? MaxPrice);
+        int? MinPrice,
+        int? MaxPrice);
 }

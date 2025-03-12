@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using MomBeatPvz.Api.BackgroundServices;
 using MomBeatPvz.Api.Extentions;
 using MomBeatPvz.Api.Mapping;
 using MomBeatPvz.Infrastructure.Auth;
+using MomBeatPvz.Infrastructure.RecalculatePrices;
 using MomBeatPvz.Persistence;
 using MomBeatPvz.Persistence.Mapping;
 
@@ -18,6 +20,8 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(J
 
 builder.Services.Configure<HashOptions>(builder.Configuration.GetSection(nameof(HashOptions)));
 
+builder.Services.Configure<RecalculatePricesOptions>(builder.Configuration.GetSection(nameof(RecalculatePricesOptions)));
+
 builder.Services.AddUnitOfWork();
 builder.Services.AddUserServices();
 builder.Services.AddHeroServices();
@@ -28,7 +32,7 @@ builder.Services.AddChampionshipServices();
 
 builder.Services.AddAuthenticationServices(builder.Configuration);
 
-/*builder.Services.AddHostedService<RecalculateTierListPricesBackgroundService>();*/
+builder.Services.AddHostedService<RecalculateTierListPricesBackgroundService>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
@@ -19,7 +20,7 @@ namespace MomBeatPvz.Persistence.Repositories
         BaseRepository<TierList, TierListCreateModel, TierListUpdateModel, TierListEntity, long>,
         ITierListStore
     {
-        public TierListRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
+        public TierListRepository(ApplicationContext db, IMapper mapper, IUnitOfWork unitOfWork) : base(db, mapper, unitOfWork)
         {
         }
 
@@ -36,6 +37,8 @@ namespace MomBeatPvz.Persistence.Repositories
         {
             var existedTierList = await _db.TierLists
                 .Include(t => t.Creator)
+                .Include(t => t.Championship)
+                .ThenInclude(c => c.Heroes)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             return _mapper.Map<TierList>(existedTierList);
@@ -49,6 +52,28 @@ namespace MomBeatPvz.Persistence.Repositories
                 .ToListAsync();
 
             return _mapper.Map<IReadOnlyList<TierList>>(existedTierLists);
+        }
+
+        public override async Task Update(TierListUpdateModel model)
+        {
+            await _unitOfWork.InTransaction(async () =>
+            {
+                var existed = await _db.TierLists
+                .Include(x => x.Creator)
+                .FirstOrDefaultAsync(x => x.Id!.Equals(model.Id))
+                ?? throw new NotFoundException();
+
+                if (existed.Creator.Id != model.AuthorId)
+                {
+                    throw new ForbiddenException("Нельзяа редактировать чужой тирлист!");
+                }
+
+                _mapper.Map(model, existed);
+
+                var entries = _db.ChangeTracker.Entries();
+
+                await _db.SaveChangesAsync();
+            });
         }
     }
 }

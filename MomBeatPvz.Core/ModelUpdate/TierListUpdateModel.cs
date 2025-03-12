@@ -19,8 +19,8 @@ namespace MomBeatPvz.Core.ModelCreate
 
         public string? Description { get; set; }
 
-        public Trackable<int>? MinPrice { get; set; }
+        public int? MinPrice { get; set; }
 
-        public Trackable<int>? MaxPrice { get; set; }
+        public int? MaxPrice { get; set; }
     }
 }

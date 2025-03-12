@@ -8,7 +8,7 @@ namespace MomBeatPvz.Api.Contracts.Championship
         long Id,
         string? Name,
         string? Description,
-        Trackable<ChampionshipStage>? Stage,
+        ChampionshipStage? Stage,
         Trackable<DateTime?>? StartDate,
         Trackable<DateTime?>? EndDate,
         long[]? TeamIds,

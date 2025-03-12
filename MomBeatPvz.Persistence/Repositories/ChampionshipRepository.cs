@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
@@ -19,62 +20,80 @@ namespace MomBeatPvz.Persistence.Repositories
         BaseRepository<Championship, ChampionshipCreateModel, ChampionshipUpdateModel, ChampionshipEntity, long>,
         IChampionshipStore
     {
-        public ChampionshipRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
+        public ChampionshipRepository(ApplicationContext db, IMapper mapper, IUnitOfWork unitOfWork) : base(db, mapper, unitOfWork)
         {
         }
 
         public async override Task Update(ChampionshipUpdateModel model)
         {
-            var existed = await _db.Championships.Include(x => x.Heroes).FirstOrDefaultAsync(x => x.Id!.Equals(model.Id))
+            await _unitOfWork.InTransaction(async () =>
+            {
+                var existed = await _db.Championships
+                .Include(x => x.Heroes)
+                .Include(x => x.Creator)
+                .FirstOrDefaultAsync(x => x.Id!.Equals(model.Id))
                 ?? throw new NotFoundException();
 
-            _mapper.Map(model, existed);
+                if (existed.Creator.Id != model.AuthorId)
+                {
+                    throw new ForbiddenException("Нельзя редактировать чужой тирлист!");
+                }
 
-            if (model.Heroes is not null)
-            {
-                var existedHeroIds = existed.Heroes.Select(x => x.Id).ToArray();
+                _mapper.Map(model, existed);
 
-                var newHeroIds = model.Heroes.Select(x => x.Id).ToArray();
+                if (model.Heroes is not null)
+                {
+                    var existedHeroIds = existed.Heroes.Select(x => x.Id).ToArray();
 
-                existed.Heroes.RemoveAll(x => !newHeroIds.Contains(x.Id));
+                    var newHeroIds = model.Heroes.Select(x => x.Id).ToArray();
 
-                existed.Heroes.AddRange(newHeroIds
-                    .Where(x => !existedHeroIds.Contains(x))
-                    .Select(x => new HeroEntity { Id = x})
-                    .ToList());
-            }
+                    existed.Heroes.RemoveAll(x => !newHeroIds.Contains(x.Id));
 
-            if (model.Matches is not null)
-            {
-                var existedMatchIds = existed.Matches.Select(x => x.Id).ToArray();
+                    if (!newHeroIds.All(x => existedHeroIds.Contains(x)))
+                    {
+                        var newHeroes = newHeroIds
+                        .Where(x => !existedHeroIds.Contains(x))
+                        .Select(x => new HeroEntity { Id = x })
+                        .ToList();
 
-                var newMatchIds = model.Matches.Select(x => x.Id).ToArray();
+                        _db.AttachRange(newHeroes);
 
-                existed.Matches.RemoveAll(x => !newMatchIds.Contains(x.Id));
+                        existed.Heroes.AddRange(newHeroes);
+                    }
+                }
 
-                existed.Matches.AddRange(newMatchIds
-                    .Where(x => !existedMatchIds.Contains(x))
-                    .Select(x => new MatchEntity { Id = x })
-                    .ToList());
-            }
+                if (model.Matches is not null)
+                {
+                    var existedMatchIds = existed.Matches.Select(x => x.Id).ToArray();
 
-            if (model.Teams is not null)
-            {
-                var existedTeamIds = existed.Teams.Select(x => x.Id).ToArray();
+                    var newMatchIds = model.Matches.Select(x => x.Id).ToArray();
 
-                var newTeamIds = model.Teams.Select(x => x.Id).ToArray();
+                    existed.Matches.RemoveAll(x => !newMatchIds.Contains(x.Id));
 
-                existed.Teams.RemoveAll(x => !newTeamIds.Contains(x.Id));
+                    existed.Matches.AddRange(newMatchIds
+                        .Where(x => !existedMatchIds.Contains(x))
+                        .Select(x => new MatchEntity { Id = x })
+                        .ToList());
+                }
 
-                existed.Teams.AddRange(newTeamIds
-                    .Where(x => !existedTeamIds.Contains(x))
-                    .Select(x => new TeamEntity { Id = x })
-                    .ToList());
-            }
+                if (model.Teams is not null)
+                {
+                    var existedTeamIds = existed.Teams.Select(x => x.Id).ToArray();
 
-            var entries = _db.ChangeTracker.Entries();
+                    var newTeamIds = model.Teams.Select(x => x.Id).ToArray();
 
-            await _db.SaveChangesAsync();
+                    existed.Teams.RemoveAll(x => !newTeamIds.Contains(x.Id));
+
+                    existed.Teams.AddRange(newTeamIds
+                        .Where(x => !existedTeamIds.Contains(x))
+                        .Select(x => new TeamEntity { Id = x })
+                        .ToList());
+                }
+
+                var entries = _db.ChangeTracker.Entries();
+
+                await _db.SaveChangesAsync();
+            });
         }
 
         public async override Task<Championship> GetById(long id)

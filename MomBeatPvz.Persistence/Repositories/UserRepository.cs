@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
@@ -13,7 +14,7 @@ namespace MomBeatPvz.Persistence.Repositories
         BaseRepository<User, UserCreateModel, UserUpdateModel, UserEntity, long>,
         IUserStore
     {
-        public UserRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
+        public UserRepository(ApplicationContext db, IMapper mapper, IUnitOfWork unitOfWork) : base(db, mapper, unitOfWork)
         {
         }
 

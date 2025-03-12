@@ -6,6 +6,6 @@ namespace MomBeatPvz.Api.Contracts.Championship
 {
     public record MatchUpdateRequestDto(
         long Id,
-        Trackable<bool>? IsCompleted,
+        bool? IsCompleted,
         Dictionary<long, double>? Results);
 }

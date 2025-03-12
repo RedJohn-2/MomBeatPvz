@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using MomBeatPvz.Application.Interfaces;
+using MomBeatPvz.Application.Operations;
 using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Application.Services;
 using MomBeatPvz.Core.Store;
@@ -29,6 +30,8 @@ namespace MomBeatPvz.Api.Extentions
 
             services.AddScoped<ITierListSolutionStore, TierListSolutionRepository>();
             services.AddScoped<ITierListSolutionService, TierListSolutionService>();
+
+            services.AddScoped<IRecalculateTierListPricesOperation, RecalculateTierListPricesOperation>();
 
             return services;
         }

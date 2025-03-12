@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
@@ -19,8 +20,42 @@ namespace MomBeatPvz.Persistence.Repositories
         BaseRepository<TierListSolution, TierListSolutionCreateModel, TierListSolutionUpdateModel, TierListSolutionEntity, long>,
         ITierListSolutionStore
     {
-        public TierListSolutionRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
+        public TierListSolutionRepository(ApplicationContext db, IMapper mapper, IUnitOfWork unitOfWork) : base(db, mapper, unitOfWork)
         {
+        }
+
+        public override async Task Create(TierListSolutionCreateModel model)
+        {
+            var entity = _mapper.Map<TierListSolutionEntity>(model);
+
+            await _unitOfWork.InTransaction(async () =>
+            {
+                await ValidateHeroes(entity);
+
+                _db.Entry(entity.TierList).State = EntityState.Unchanged;
+
+                _db.TierListSolutions.Attach(entity);
+
+                var entries = _db.ChangeTracker.Entries();
+
+                await _db.SaveChangesAsync();
+            });
+        }
+
+        private async Task ValidateHeroes(TierListSolutionEntity entity)
+        {
+            var heroInSolutionIds = entity.HeroPrices.Select(x => x.Hero.Id).ToArray();
+
+            var heroesInTierListIds = await _db.TierLists
+                .Where(x => x.Id == entity.TierListId)
+                .SelectMany(x => x.Championship.Heroes)
+                .Select(x => x.Id)
+                .ToArrayAsync();
+
+            if (!heroInSolutionIds.All(x => heroesInTierListIds.Contains(x)))
+            {
+                throw new NotFoundException("Недопустимые персонажи в тирлисте!");
+            }
         }
 
         public override async Task<IReadOnlyList<TierListSolution>> GetAll()
@@ -56,17 +91,37 @@ namespace MomBeatPvz.Persistence.Repositories
 
         public override async Task Update(TierListSolutionUpdateModel model)
         {
-            var existedSolution = await _db.TierListSolutions
-                .FirstOrDefaultAsync(s => s.Id == model.Id)
-                ?? throw new NotFoundException();
+            await _unitOfWork.InTransaction(async () =>
+            {
+                var existedSolution = await _db.TierListSolutions
+               .FirstOrDefaultAsync(s => s.Id == model.Id)
+               ?? throw new NotFoundException();
 
-            await _db.HeroPrices
-                .Where(p => p.Solution == existedSolution)
-                .ExecuteDeleteAsync();
+                if (existedSolution.OwnerId != model.AuthorId)
+                {
+                    throw new ForbiddenException("Нельзя изменять чужое решение!");
+                }
 
-            _mapper.Map(model, existedSolution);
+                await _db.HeroPrices
+                    .Where(p => p.Solution == existedSolution)
+                    .ExecuteDeleteAsync();
 
-            await _db.SaveChangesAsync();
+                var entries = _db.ChangeTracker.Entries();
+
+                _mapper.Map(model, existedSolution);
+
+                entries = _db.ChangeTracker.Entries();
+
+                await ValidateHeroes(existedSolution);
+
+                entries = _db.ChangeTracker.Entries();
+
+                _db.Heroes.AttachRange(existedSolution.HeroPrices.Select(x => x.Hero));
+
+                entries = _db.ChangeTracker.Entries();
+
+                await _db.SaveChangesAsync();
+            });
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MomBeatPvz.Core.Model;
 using MomBeatPvz.Persistence.Entities.Abstract;
+using System.ComponentModel.DataAnnotations;
 
 namespace MomBeatPvz.Persistence.Entities
 {
@@ -9,12 +10,12 @@ namespace MomBeatPvz.Persistence.Entities
 
         public TierListEntity TierList { get; set; } = new();
 
-        public UserEntity Owner { get; set; } = new();
+        public UserEntity? Owner { get; set; }
 
         public List<HeroPriceEntity> HeroPrices { get; set; } = new();
 
         public long TierListId { get; set; }
 
-        public long OwnerId { get; set; }
+        public long? OwnerId { get; set; }
     }
 }

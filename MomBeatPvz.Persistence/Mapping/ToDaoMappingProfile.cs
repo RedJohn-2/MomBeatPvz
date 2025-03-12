@@ -84,7 +84,7 @@ namespace MomBeatPvz.Persistence.Mapping
                 .ForMember(dest => dest.IsCompleted, opt =>
                 {
                     opt.PreCondition(src => src.IsCompleted is not null);
-                    opt.MapFrom(src => src.IsCompleted!.Value);
+                    opt.MapFrom(src => src.IsCompleted.Value);
                 })
                 .ForMember(dest => dest.Results, opt =>
                 {

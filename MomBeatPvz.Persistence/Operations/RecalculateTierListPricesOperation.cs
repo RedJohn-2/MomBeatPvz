@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MomBeatPvz.Application.Operations;
+using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Persistence.Entities;
 using System;
@@ -16,29 +17,41 @@ namespace MomBeatPvz.Persistence.Operations
     {
         private readonly ApplicationContext _db;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RecalculateTierListPricesOperation(ApplicationContext db, IMapper mapper)
+        public RecalculateTierListPricesOperation(
+            ApplicationContext db, 
+            IMapper mapper,
+            IUnitOfWork unitOfWork)
         {
             _db = db;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task Operate()
         {
-            var tierLists = await _db.TierLists
+            await _unitOfWork.InTransaction(async () =>
+            {
+                var tierLists = await _db.TierLists
                 .Include(t => t.Result)
                 .Include(t => t.Solutions)
                 .ThenInclude(s => s.HeroPrices)
                 .ToListAsync();
 
-            var heroMap = await _db.Heroes.ToDictionaryAsync(h => h.Id, h => h);
+                var heroMap = await _db.Heroes.ToDictionaryAsync(h => h.Id, h => h);
 
-            tierLists.ForEach(async x => await RecalculateTierList(x, heroMap));
+                foreach (var tierList in tierLists)
+                {
+                    await RecalculateTierList(tierList, heroMap);
+                }
+            });
         }
 
         public async Task RecalculateTierList(TierListEntity tierList, Dictionary<int, HeroEntity> heroMap)
         {
             var pricesMap = tierList.Solutions
+                .Where(s => s.OwnerId is not null)
                 .SelectMany(s => s.HeroPrices)
                 .GroupBy(p => p.Hero.Id)               
                 .ToDictionary(g => g.Key, g => g.Select(g => g.Value));
@@ -70,10 +83,27 @@ namespace MomBeatPvz.Persistence.Operations
                     });
                 }
 
-                tierList.Result.HeroPrices = resultPrices;              
-            }
+                var result = new TierListSolutionEntity();
 
-            await _db.SaveChangesAsync();
+                if (tierList.Result is not null)
+                {
+                    await _db.HeroPrices
+                    .Where(p => p.Solution == tierList.Result)
+                    .ExecuteDeleteAsync();
+                }
+                else
+                {
+                    result.TierList = tierList;
+                }
+
+                result.HeroPrices = resultPrices;
+
+                _db.TierListSolutions.Attach(result);
+
+                var entries = _db.ChangeTracker.Entries();
+
+                await _db.SaveChangesAsync();
+            }
         }
     }
 }

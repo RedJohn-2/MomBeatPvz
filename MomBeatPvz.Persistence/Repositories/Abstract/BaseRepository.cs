@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.Model.Abstract;
@@ -26,10 +27,13 @@ namespace MomBeatPvz.Persistence.Repositories.Abstract
 
         protected readonly IMapper _mapper;
 
-        public BaseRepository(ApplicationContext db, IMapper mapper)
+        protected readonly IUnitOfWork _unitOfWork;
+
+        public BaseRepository(ApplicationContext db, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _db = db;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public virtual async Task Create(C model)
@@ -74,15 +78,18 @@ namespace MomBeatPvz.Persistence.Repositories.Abstract
 
         public virtual async Task Update(U model)
         {
-            var existed = await _db.GetDbSet<E>()
+            await _unitOfWork.InTransaction(async () =>
+            {
+                var existed = await _db.GetDbSet<E>()
                 .FirstOrDefaultAsync(x => x.Id!.Equals(model.Id))
                 ?? throw new NotFoundException();
 
-            _mapper.Map(model, existed);
+                _mapper.Map(model, existed);
 
-            var entries = _db.ChangeTracker.Entries();
+                var entries = _db.ChangeTracker.Entries();
 
-            await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
+            });  
         }
     }
 }

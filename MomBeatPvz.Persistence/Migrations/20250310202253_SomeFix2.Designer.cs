@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MomBeatPvz.Persistence;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MomBeatPvz.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250310202253_SomeFix2")]
+    partial class SomeFix2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -269,6 +272,7 @@ namespace MomBeatPvz.Persistence.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<long>("TierListId")
@@ -276,7 +280,7 @@ namespace MomBeatPvz.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasAlternateKey("OwnerId", "TierListId");
 
                     b.HasIndex("TierListId");
 
@@ -440,7 +444,9 @@ namespace MomBeatPvz.Persistence.Migrations
                 {
                     b.HasOne("MomBeatPvz.Persistence.Entities.UserEntity", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MomBeatPvz.Persistence.Entities.TierListEntity", "TierList")
                         .WithMany("Solutions")

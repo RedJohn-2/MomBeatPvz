@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MomBeatPvz.Api.Contracts.Championship;
 using MomBeatPvz.Api.Contracts.Hero;
 using MomBeatPvz.Api.Contracts.Match;
 using MomBeatPvz.Api.Contracts.Team;
@@ -29,7 +30,10 @@ namespace MomBeatPvz.Api.Mapping
                                                     x => x.Value)));
 
             CreateMap<TierList, TierListResponseDto>()
-                .ForMember(dest => dest.ChampionshipId, opt => opt.MapFrom(src => src.Championship.Id));
+                .ForMember(dest => dest.ChampionshipId, opt => opt.MapFrom(src => src.Championship.Id))
+                .ForMember(dest => dest.Heroes, opt =>
+                                                opt.MapFrom(src => src.Championship.Heroes
+                                                .Select(x => new HeroResponseDto(x.Id, x.Name, x.Url)).ToArray()));
 
             CreateMap<TierList, TierListRowResponseDto>()
                 .ForMember(dest => dest.ChampionshipId, opt => opt.MapFrom(src => src.Championship.Id));
@@ -44,6 +48,8 @@ namespace MomBeatPvz.Api.Mapping
                                                 .ToDictionary(
                                                     x => x.Team.Id,
                                                     x => x.Score)));
+
+            CreateMap<Championship, ChampionshipResponseDto>();
         }
     }
 }

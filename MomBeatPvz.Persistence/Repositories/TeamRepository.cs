@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
@@ -19,7 +20,7 @@ namespace MomBeatPvz.Persistence.Repositories
         BaseRepository<Team, TeamCreateModel, TeamUpdateModel, TeamEntity, long>,
         ITeamStore
     {
-        public TeamRepository(ApplicationContext db, IMapper mapper) : base(db, mapper)
+        public TeamRepository(ApplicationContext db, IMapper mapper, IUnitOfWork unitOfWork) : base(db, mapper, unitOfWork)
         {
         }
 

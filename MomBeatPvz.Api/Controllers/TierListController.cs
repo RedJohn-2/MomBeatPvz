@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MomBeatPvz.Api.Contracts.Championship;
+using MomBeatPvz.Api.Contracts.Hero;
 using MomBeatPvz.Api.Contracts.TierList;
 using MomBeatPvz.Api.Contracts.User;
 using MomBeatPvz.Application.Interfaces;
@@ -54,7 +55,9 @@ namespace MomBeatPvz.Api.Controllers
         {
             var tierList = await _tierListService.GetByIdAsync(id);
 
-            return Ok(_mapper.Map<TierListResponseDto>(tierList));
+            var dto = _mapper.Map<TierListResponseDto>(tierList);
+
+            return Ok(dto);
         }
 
         [HttpPut("[action]")]

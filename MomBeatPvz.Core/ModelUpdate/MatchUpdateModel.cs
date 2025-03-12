@@ -12,7 +12,7 @@ namespace MomBeatPvz.Core.ModelUpdate
     {
         public long Id { get; set; }
 
-        public Trackable<bool>? IsCompleted { get; set; }
+        public bool? IsCompleted { get; set; }
 
         public List<MatchResult>? Results { get; set; }
     }

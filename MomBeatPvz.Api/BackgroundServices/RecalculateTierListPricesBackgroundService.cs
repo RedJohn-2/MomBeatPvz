@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Operations;
 using MomBeatPvz.Core.Model;
@@ -8,15 +9,15 @@ namespace MomBeatPvz.Api.BackgroundServices
 {
     public class RecalculateTierListPricesBackgroundService : BackgroundService
     {
-        private readonly IRecalculateTierListPricesOperation _recalculateOperation;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private readonly RecalculatePricesOptions _recalcOpt;
 
         public RecalculateTierListPricesBackgroundService(
-            IRecalculateTierListPricesOperation recalculateOperation, 
+            IServiceScopeFactory serviceScopeFactory, 
             IOptions<RecalculatePricesOptions> opts)
         {
-            _recalculateOperation = recalculateOperation;
+            _serviceScopeFactory = serviceScopeFactory;
             _recalcOpt = opts.Value;
         }
 
@@ -24,7 +25,13 @@ namespace MomBeatPvz.Api.BackgroundServices
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await _recalculateOperation.Operate();
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var recalculateOperation = 
+                        scope.ServiceProvider.GetRequiredService<IRecalculateTierListPricesOperation>();
+
+                    await recalculateOperation.Operate();
+                }
 
                 await Task.Delay(1000 * _recalcOpt.RecalculateTimeSeconds, stoppingToken);
             }
