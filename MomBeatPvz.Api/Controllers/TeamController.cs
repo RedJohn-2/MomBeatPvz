@@ -50,7 +50,7 @@ namespace MomBeatPvz.Api.Controllers
         }
 
         [HttpPut("[action]")]
-        [Authorize(Policy = "Admin")]
+        [Authorize]
         public async Task<ActionResult> Update(TeamUpdateRequestDto dto)
         {
             var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);

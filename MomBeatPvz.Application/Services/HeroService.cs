@@ -1,4 +1,5 @@
 ﻿using MomBeatPvz.Application.Interfaces;
+using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.ModelUpdate;
@@ -33,6 +34,16 @@ namespace MomBeatPvz.Application.Services
         public async Task<IReadOnlyList<Hero>> GetAllAsync()
         {
             return await _heroStore.GetAll();
+        }
+
+        public void CheckDuplicates(List<Hero> heroes)
+        {
+            var uniqueHeroes = heroes.Select(x => x.Id).Distinct().Count();
+
+            if (heroes.Count != uniqueHeroes)
+            {
+                throw new DuplicateException("Дубликаты героев!");
+            }
         }
     }
 }

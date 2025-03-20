@@ -1,4 +1,5 @@
 ﻿using MomBeatPvz.Application.Interfaces;
+using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelUpdate;
 using MomBeatPvz.Core.Store;
@@ -13,10 +14,12 @@ namespace MomBeatPvz.Application.Services
     public class MatchService : IMatchService
     {
         private readonly IMatchStore _matchStore;
+        private readonly ITeamService _teamService;
 
-        public MatchService(IMatchStore matchStore)
+        public MatchService(IMatchStore matchStore, ITeamService teamService)
         {
             _matchStore = matchStore;
+            _teamService = teamService;
         }
 
         public async Task CreateAsync(MatchCreateModel model)
@@ -31,7 +34,22 @@ namespace MomBeatPvz.Application.Services
 
         public async Task UpdateAsync(MatchUpdateModel model)
         {
+            if (model.Results is not null)
+            {
+                _teamService.CheckDuplicates(model.Results.Select(x => x.Team).ToList());
+            }
+
             await _matchStore.Update(model);
+        }
+
+        public void CheckDuplicates(List<Match> matches)
+        {
+            var uniqueMatches = matches.Select(x => x.Id).Distinct().Count();
+
+            if (matches.Count != uniqueMatches)
+            {
+                throw new DuplicateException("Дубликаты матчей!");
+            }
         }
     }
 }

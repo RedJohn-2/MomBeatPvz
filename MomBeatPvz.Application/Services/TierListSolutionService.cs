@@ -16,19 +16,23 @@ namespace MomBeatPvz.Application.Services
     public class TierListSolutionService : ITierListSolutionService
     {
         private readonly ITierListSolutionStore _tierListSolutionStore;
-
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHeroService _heroService;
 
         public TierListSolutionService(
             ITierListSolutionStore tierListSolutionStore,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IHeroService heroService)
         {
             _tierListSolutionStore = tierListSolutionStore;
             _unitOfWork = unitOfWork;
+            _heroService = heroService;
         }
 
         public async Task CreateAsync(TierListSolutionCreateModel model)
         {
+            _heroService.CheckDuplicates(model.HeroPrices.Select(x => x.Hero).ToList());
+
             await _tierListSolutionStore.Create(model);
         }
 
@@ -63,6 +67,11 @@ namespace MomBeatPvz.Application.Services
 
         public async Task UpdateAsync(TierListSolutionUpdateModel model)
         {
+            if (model.HeroPrices is not null)
+            {
+                _heroService.CheckDuplicates(model.HeroPrices.Select(x => x.Hero).ToList());
+            }
+
             await _tierListSolutionStore.Update(model);
         }
     }

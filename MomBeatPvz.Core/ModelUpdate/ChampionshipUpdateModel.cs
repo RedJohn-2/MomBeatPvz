@@ -19,6 +19,8 @@ namespace MomBeatPvz.Core.Model
 
         public string? Description { get; set; }
 
+        public int? TeamPrice { get; set; }
+
         public ChampionshipStage? Stage { get; set; }
 
         public Trackable<DateTime?>? StartDate { get; set; }

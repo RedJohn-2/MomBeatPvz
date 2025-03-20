@@ -14,6 +14,8 @@ namespace MomBeatPvz.Core.Model
 
         public string Description { get; set; } = string.Empty;
 
+        public int TeamPrice { get; set; }
+
         public ChampionshipFormat Format { get; set; }
 
         public DateTime? StartDate { get; set; }

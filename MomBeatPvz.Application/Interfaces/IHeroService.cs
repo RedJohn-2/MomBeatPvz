@@ -19,5 +19,7 @@ namespace MomBeatPvz.Application.Interfaces
         Task<Hero> GetByIdAsync(int id);
 
         Task<IReadOnlyList<Hero>> GetAllAsync();
+
+        void CheckDuplicates(List<Hero> heroes);
     }
 }

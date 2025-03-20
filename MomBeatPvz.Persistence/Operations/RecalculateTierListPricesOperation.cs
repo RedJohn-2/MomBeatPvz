@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MomBeatPvz.Application.Operations;
 using MomBeatPvz.Application.Operations.UnitOfWork;
+using MomBeatPvz.Core.Enums;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Persistence.Entities;
 using System;
@@ -34,10 +35,16 @@ namespace MomBeatPvz.Persistence.Operations
             await _unitOfWork.InTransaction(async () =>
             {
                 var tierLists = await _db.TierLists
-                .Include(t => t.Result)
-                .Include(t => t.Solutions)
-                .ThenInclude(s => s.HeroPrices)
-                .ToListAsync();
+                    .Where(x => x.Championship.Stage == ChampionshipStage.TierListVouting)
+                    .Include(t => t.Result)
+                    .Include(t => t.Solutions)
+                    .ThenInclude(s => s.HeroPrices)
+                    .ToListAsync();
+
+                if (tierLists.Count == 0)
+                {
+                    return;
+                }
 
                 var heroMap = await _db.Heroes.ToDictionaryAsync(h => h.Id, h => h);
 
@@ -83,22 +90,14 @@ namespace MomBeatPvz.Persistence.Operations
                     });
                 }
 
-                var result = new TierListSolutionEntity();
-
-                if (tierList.Result is not null)
+                if (tierList.Result is null)
                 {
-                    await _db.HeroPrices
-                    .Where(p => p.Solution == tierList.Result)
-                    .ExecuteDeleteAsync();
-                }
-                else
-                {
-                    result.TierList = tierList;
+                    tierList.Result = new TierListSolutionEntity { TierList = tierList };
                 }
 
-                result.HeroPrices = resultPrices;
+                tierList.Result.HeroPrices = resultPrices;
 
-                _db.TierListSolutions.Attach(result);
+                _db.TierListSolutions.Attach(tierList.Result);
 
                 var entries = _db.ChangeTracker.Entries();
 

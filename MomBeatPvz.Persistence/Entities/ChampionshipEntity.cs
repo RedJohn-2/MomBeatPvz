@@ -17,6 +17,8 @@ namespace MomBeatPvz.Persistence.Entities
 
         public string Description { get; set; } = string.Empty;
 
+        public int TeamPrice { get; set; }
+
         public ChampionshipStage Stage { get; set; }
 
         public ChampionshipFormat Format { get; set; }

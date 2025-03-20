@@ -35,6 +35,7 @@ namespace MomBeatPvz.Api.Controllers
             {
                 Name = dto.Name,
                 Description = dto.Description,
+                TeamPrice = dto.TeamPrice,
                 Format = dto.Format,
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
@@ -67,6 +68,7 @@ namespace MomBeatPvz.Api.Controllers
                 AuthorId = userId,
                 Name = dto.Name,
                 Description = dto.Description,
+                TeamPrice = dto.TeamPrice,
                 Stage = dto.Stage,
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,

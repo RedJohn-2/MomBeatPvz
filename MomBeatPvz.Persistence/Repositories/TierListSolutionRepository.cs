@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MomBeatPvz.Application.Operations.UnitOfWork;
+using MomBeatPvz.Core.Enums;
 using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
@@ -30,6 +31,24 @@ namespace MomBeatPvz.Persistence.Repositories
 
             await _unitOfWork.InTransaction(async () =>
             {
+                var championship = await _db.Championships
+                    .FirstOrDefaultAsync(x => x.TierListId == entity.TierList.Id)
+                    ?? throw new NotFoundException();
+
+                if (championship.Stage != ChampionshipStage.TierListVouting)
+                {
+                    throw new BadRequestException("Создавать решения для тирлистов на данный момент нельзя!");
+                }
+
+                var solutionExist = await _db.TierListSolutions
+                    .Where(x => x.TierListId == entity.TierList.Id && x.OwnerId == entity.Owner!.Id)
+                    .AnyAsync();
+
+                if (solutionExist)
+                {
+                    throw new DuplicateException("Ваше решение для данного тирлиста уже существует! Измените существующее решение!");
+                }
+               
                 await ValidateHeroes(entity);
 
                 _db.Entry(entity.TierList).State = EntityState.Unchanged;
@@ -94,29 +113,27 @@ namespace MomBeatPvz.Persistence.Repositories
             await _unitOfWork.InTransaction(async () =>
             {
                 var existedSolution = await _db.TierListSolutions
-               .FirstOrDefaultAsync(s => s.Id == model.Id)
-               ?? throw new NotFoundException();
+                    .Include(x => x.HeroPrices)
+                   .FirstOrDefaultAsync(s => s.Id == model.Id)
+                   ?? throw new NotFoundException();
 
                 if (existedSolution.OwnerId != model.AuthorId)
                 {
                     throw new ForbiddenException("Нельзя изменять чужое решение!");
                 }
 
-                await _db.HeroPrices
-                    .Where(p => p.Solution == existedSolution)
-                    .ExecuteDeleteAsync();
-
                 var entries = _db.ChangeTracker.Entries();
 
                 _mapper.Map(model, existedSolution);
 
-                entries = _db.ChangeTracker.Entries();
+                if (model.HeroPrices is not null)
+                {
+                    await ValidateHeroes(existedSolution);
 
-                await ValidateHeroes(existedSolution);
+                    entries = _db.ChangeTracker.Entries();
 
-                entries = _db.ChangeTracker.Entries();
-
-                _db.Heroes.AttachRange(existedSolution.HeroPrices.Select(x => x.Hero));
+                    _db.Heroes.AttachRange(existedSolution.HeroPrices.Select(x => x.Hero));
+                }
 
                 entries = _db.ChangeTracker.Entries();
 

@@ -14,5 +14,7 @@ namespace MomBeatPvz.Application.Interfaces
         Task UpdateAsync(TeamUpdateModel model);
 
         Task<Team> GetByIdAsync(long id);
+
+        void CheckDuplicates(List<Team> teams);
     }
 }

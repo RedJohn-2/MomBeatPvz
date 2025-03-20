@@ -1,4 +1,5 @@
 ﻿using MomBeatPvz.Api.Contracts;
+using MomBeatPvz.Core.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Security.Authentication;
@@ -20,11 +21,11 @@ namespace MomBeatPvz.Api.Middlewares
             {
                 await _next(context);
             }
-            catch (AuthenticationException ex)
+            catch (Core.Exceptions.AuthenticationException ex)
             {
                 await HandleExceptionAsync(context, HttpStatusCode.Unauthorized, ex.Message);
             }
-            catch (ValidationException ex)
+            catch (BadRequestException ex)
             {
                 await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message);
             }
@@ -43,9 +44,11 @@ namespace MomBeatPvz.Api.Middlewares
             response.ContentType = "application/json";
             response.StatusCode = (int)statusCode;
 
-            ErrorResponse errorResponse = new((int)statusCode, message);
-
-            string result = errorResponse.ToString();
+            var result = new
+            {
+                StatusCode = (int)statusCode,
+                Message= message
+            };
 
             await response.WriteAsJsonAsync(result);
         }

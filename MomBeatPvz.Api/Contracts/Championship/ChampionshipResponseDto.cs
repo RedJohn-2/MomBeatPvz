@@ -11,6 +11,7 @@ namespace MomBeatPvz.Api.Contracts.Championship
         long Id,
         string Name,
         string Description,
+        int TeamPrice,
         ChampionshipStage Stage,
         ChampionshipFormat Format,
         TierListRowResponseDto TierList,

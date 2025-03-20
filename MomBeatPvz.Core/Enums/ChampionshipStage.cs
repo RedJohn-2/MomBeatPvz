@@ -8,6 +8,8 @@ namespace MomBeatPvz.Core.Enums
 {
     public enum ChampionshipStage
     {
+        Created = 0,
+
         NotStarted = 10,
 
         TierListVouting = 20,
@@ -16,18 +18,20 @@ namespace MomBeatPvz.Core.Enums
 
         CreatingTeams = 40,
 
-        ReadyToStart = 50,
+        QualifyingStage = 50,
 
-        Started = 60,
+        ReadyToStart = 60,
 
-        GroupStage = 70,
+        Started = 70,
 
-        QuarterStage = 80,
+        GroupStage = 80,
 
-        HalfStage = 90,
+        QuarterStage = 90,
 
-        FinalStage = 100,
+        HalfStage = 100,
 
-        Completed = 110,
+        FinalStage = 110,
+
+        Completed = 120,
     }
 }
