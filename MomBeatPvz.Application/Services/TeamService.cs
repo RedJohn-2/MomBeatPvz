@@ -1,4 +1,6 @@
-﻿using MomBeatPvz.Application.Interfaces;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Services.Abstract;
+using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.Store;
@@ -10,24 +12,24 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Application.Services
 {
-    public class TeamService : ITeamService
+    public class TeamService : 
+        BaseService<Team, TeamCreateModel, TeamUpdateModel, long, ITeamStore>,
+        ITeamService
     {
-        private readonly ITeamStore _teamStore;
         private readonly IHeroService _heroService;
 
-        public TeamService(ITeamStore teamStore, IHeroService heroService)
+        public TeamService(ITeamStore teamStore, IHeroService heroService, IDistributedCache) : base(teamStore, distributedCache)
         {
-            _teamStore = teamStore;
             _heroService = heroService;
         }
 
-        public async Task CreateAsync(TeamCreateModel model)
+        public async override Task CreateAsync(TeamCreateModel model)
         {
             CheckTeamSize(model.Heroes);
 
             _heroService.CheckDuplicates(model.Heroes);
 
-            await _teamStore.Create(model);
+            await base.CreateAsync(model);
         }
 
         private static void CheckTeamSize(List<Hero> heroes)
@@ -38,12 +40,7 @@ namespace MomBeatPvz.Application.Services
             }
         }
 
-        public async Task<Team> GetByIdAsync(long id)
-        {
-            return await _teamStore.GetById(id);
-        }
-
-        public async Task UpdateAsync(TeamUpdateModel model)
+        public async override Task UpdateAsync(TeamUpdateModel model)
         {
             if (model.Heroes is not null)
             {
@@ -52,7 +49,7 @@ namespace MomBeatPvz.Application.Services
                 _heroService.CheckDuplicates(model.Heroes);
             }
 
-            await _teamStore.Update(model);
+            await base.UpdateAsync(model);
         }
 
         public void CheckDuplicates(List<Team> teams)

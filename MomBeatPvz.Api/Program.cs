@@ -11,10 +11,15 @@ using MomBeatPvz.Persistence.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables();
+
 builder.Services.AddAutoMapper(typeof(ToDaoMappingProfile).Assembly, typeof(ToDtoMappingProfile).Assembly);
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
+
+builder.Services.AddStackExchangeRedisCache(options => 
+    options.Configuration = builder.Configuration.GetConnectionString("Cache"));
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
 
@@ -81,11 +86,16 @@ builder.Services.AddCors(opts =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+/*if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    
+}*/
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+});
 
 app.UseExceptionHandling();
 

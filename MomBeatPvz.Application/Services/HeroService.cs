@@ -1,4 +1,6 @@
-﻿using MomBeatPvz.Application.Interfaces;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Services.Abstract;
+using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Exceptions;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
@@ -7,33 +9,15 @@ using MomBeatPvz.Core.Store;
 
 namespace MomBeatPvz.Application.Services
 {
-    public class HeroService : IHeroService
+    public class HeroService :
+        BaseService<Hero, HeroCreateModel, HeroUpdateModel, int, IHeroStore>, 
+        IHeroService
     {
-        private readonly IHeroStore _heroStore;
-
-        public HeroService(IHeroStore heroStore)
-        {
-            _heroStore = heroStore;
-        }
-
-        public async Task CreateAsync(HeroCreateModel model)
-        {
-            await _heroStore.Create(model);
-        }
-
-        public async Task UpdateAsync(HeroUpdateModel model)
-        {
-            await _heroStore.Update(model);
-        }
-
-        public async Task<Hero> GetByIdAsync(int id)
-        {
-            return await _heroStore.GetById(id);
-        }
+        public HeroService(IHeroStore heroStore, IDistributedCache distributedCache) : base(heroStore, distributedCache) { }
 
         public async Task<IReadOnlyList<Hero>> GetAllAsync()
         {
-            return await _heroStore.GetAll();
+            return await _store.GetAll();
         }
 
         public void CheckDuplicates(List<Hero> heroes)

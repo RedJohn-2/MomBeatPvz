@@ -1,5 +1,8 @@
-﻿using MomBeatPvz.Application.Interfaces;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Operations.UnitOfWork;
+using MomBeatPvz.Application.Services.Abstract;
+using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.Store;
@@ -8,10 +11,10 @@ using System.Security.Claims;
 
 namespace MomBeatPvz.Application.Services
 {
-    public class UserService : IUserService
+    public class UserService : 
+        BaseService<User, UserCreateModel, UserUpdateModel, long, IUserStore>,
+        IUserService
     {
-        private readonly IUserStore _userStore;
-
         private readonly IUnitOfWork _unitOfWork;
 
         private readonly IJwtProvider _jwtProvider;
@@ -19,10 +22,13 @@ namespace MomBeatPvz.Application.Services
         private readonly IHashProvider _hashProvider;
 
         public UserService(
-            IUserStore userStore, IUnitOfWork unitOfWork, 
-            IJwtProvider jwtProvider, IHashProvider hashProvider)
+            IUserStore userStore, 
+            IUnitOfWork unitOfWork, 
+            IJwtProvider jwtProvider, 
+            IHashProvider hashProvider,
+            IDistributedCache distributedCache)
+            : base(userStore, distributedCache)
         {
-            _userStore = userStore;
             _unitOfWork = unitOfWork;
             _jwtProvider = jwtProvider;
             _hashProvider = hashProvider;
@@ -39,7 +45,7 @@ namespace MomBeatPvz.Application.Services
                     throw new AuthenticationException();
                 }*/
 
-                var existedUser = await _userStore.GetById(id);
+                var existedUser = await _store.GetById(id);
 
                 if (existedUser is null) 
                 {
@@ -49,7 +55,7 @@ namespace MomBeatPvz.Application.Services
                         Name = username
                     };
 
-                    await _userStore.Create(new UserCreateModel { Id = existedUser.Id, Name = existedUser.Name});
+                    await _store.Create(new UserCreateModel { Id = existedUser.Id, Name = existedUser.Name});
                 }
 
                 return _jwtProvider.GenerateAccessToken(existedUser);
@@ -57,10 +63,14 @@ namespace MomBeatPvz.Application.Services
             });
         }
 
-        public async Task<User> GetByIdAsync(long id)
+        public override Task CreateAsync(UserCreateModel model)
         {
-            return await _userStore.GetById(id);
+            throw new NotImplementedException("Невозможная операция!!!");
         }
 
+        public override Task UpdateAsync(UserUpdateModel model)
+        {
+            throw new NotImplementedException("Невозможная операция!!!");
+        }
     }
 }

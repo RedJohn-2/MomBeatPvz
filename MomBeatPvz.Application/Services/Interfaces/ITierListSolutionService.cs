@@ -1,4 +1,5 @@
-﻿using MomBeatPvz.Core.Model;
+﻿using MomBeatPvz.Application.Services.Abstract;
+using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.ModelUpdate;
 using System;
@@ -7,18 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MomBeatPvz.Application.Interfaces
+namespace MomBeatPvz.Application.Services.Interfaces
 {
-    public interface ITierListSolutionService
+    public interface ITierListSolutionService :
+        IService<TierListSolution, TierListSolutionCreateModel, TierListSolutionUpdateModel, long>
     {
-        Task CreateAsync(TierListSolutionCreateModel model);
-
-        Task UpdateAsync(TierListSolutionUpdateModel model);
-
-        Task DeleteAsync(long id);
-
-        Task<TierListSolution> GetByIdAsync(long id);
-
         Task<IReadOnlyList<TierListSolution>> GetAllAsync();
 
         Task<IReadOnlyList<TierListSolution>> GetByTierListIdAsync(long id);

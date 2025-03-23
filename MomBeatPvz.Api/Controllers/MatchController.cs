@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MomBeatPvz.Api.Contracts.Championship;
 using MomBeatPvz.Api.Contracts.Match;
-using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Services;
+using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelUpdate;
 

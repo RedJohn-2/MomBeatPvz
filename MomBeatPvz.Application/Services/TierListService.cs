@@ -1,4 +1,6 @@
-﻿using MomBeatPvz.Application.Interfaces;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Services.Abstract;
+using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.Store;
@@ -10,33 +12,18 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Application.Services
 {
-    public class TierListService : ITierListService
+    public class TierListService : 
+        BaseService<TierList, TierListCreateModel, TierListUpdateModel, long, ITierListStore>,
+        ITierListService
     {
-        private readonly ITierListStore _tierListStore;
-
-        public TierListService(ITierListStore tierListStore)
+        public TierListService(ITierListStore tierListStore, IDistributedCache distributedCache) 
+            : base(tierListStore, distributedCache)
         {
-            _tierListStore = tierListStore;
-        }
-
-        public async Task CreateAsync(TierListCreateModel model)
-        {
-            await _tierListStore.Create(model);
-        }
-
-        public async Task UpdateAsync(TierListUpdateModel model)
-        {
-            await _tierListStore.Update(model);
-        }
-
-        public async Task<TierList> GetByIdAsync(long id)
-        {
-            return await _tierListStore.GetById(id);
         }
 
         public async Task<IReadOnlyCollection<TierList>> GetAllAsync()
         {
-            return await _tierListStore.GetAll();
+            return await _store.GetAll();
         }
     }
 }

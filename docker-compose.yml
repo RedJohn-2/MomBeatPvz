@@ -1,0 +1,32 @@
+services:
+  mombeatpvz_api:
+    image: mombeatpvz_api
+    build:
+      context: .
+      dockerfile: MomBeatPvz.Api/Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: mombeatpvz_web_api
+    environment:
+      - JwtOptions__SecretKey=${JwtOptions__SecretKey}
+      - HashOptions__SecretKey=${HashOptions__SecretKey}
+    depends_on:
+      - db
+      - cache
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSRGRES_USER: postgres
+      POSTGRES_PASSWORD: QuasWexExort228
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    container_name: db_postgresql_container
+  cache:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+volumes:
+  db_data:

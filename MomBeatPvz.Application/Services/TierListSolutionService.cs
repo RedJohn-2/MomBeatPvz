@@ -1,5 +1,7 @@
-﻿using MomBeatPvz.Application.Interfaces;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using MomBeatPvz.Application.Operations.UnitOfWork;
+using MomBeatPvz.Application.Services.Abstract;
+using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.ModelCreate;
 using MomBeatPvz.Core.ModelUpdate;
@@ -13,66 +15,47 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Application.Services
 {
-    public class TierListSolutionService : ITierListSolutionService
+    public class TierListSolutionService : 
+        BaseService<TierListSolution, TierListSolutionCreateModel, TierListSolutionUpdateModel, long, ITierListSolutionStore>,
+        ITierListSolutionService
     {
-        private readonly ITierListSolutionStore _tierListSolutionStore;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IHeroService _heroService;
 
         public TierListSolutionService(
             ITierListSolutionStore tierListSolutionStore,
-            IUnitOfWork unitOfWork,
-            IHeroService heroService)
+            IHeroService heroService,
+            IDistributedCache distributedCache)
+            : base(tierListSolutionStore, distributedCache)
         {
-            _tierListSolutionStore = tierListSolutionStore;
-            _unitOfWork = unitOfWork;
             _heroService = heroService;
         }
 
-        public async Task CreateAsync(TierListSolutionCreateModel model)
+        public async override Task CreateAsync(TierListSolutionCreateModel model)
         {
             _heroService.CheckDuplicates(model.HeroPrices.Select(x => x.Hero).ToList());
 
-            await _tierListSolutionStore.Create(model);
+            await base.CreateAsync(model);
         }
 
-        public async Task DeleteAsync(long id)
-        {
-            await _unitOfWork.InTransaction(async () =>
-            {
-                var solutionExist = await _tierListSolutionStore.Exist(id);
-
-                if (solutionExist)
-                {
-                    await _tierListSolutionStore.Delete(id);
-                }
-            });
-            
-        }
 
         public async Task<IReadOnlyList<TierListSolution>> GetAllAsync()
         {
-            return await _tierListSolutionStore.GetAll();
-        }
-
-        public async Task<TierListSolution> GetByIdAsync(long id)
-        {
-            return await _tierListSolutionStore.GetById(id);
+            return await _store.GetAll();
         }
 
         public async Task<IReadOnlyList<TierListSolution>> GetByTierListIdAsync(long id)
         {
-            return await _tierListSolutionStore.GetByTierListId(id);
+            return await _store.GetByTierListId(id);
         }
 
-        public async Task UpdateAsync(TierListSolutionUpdateModel model)
+        public async override Task UpdateAsync(TierListSolutionUpdateModel model)
         {
             if (model.HeroPrices is not null)
             {
                 _heroService.CheckDuplicates(model.HeroPrices.Select(x => x.Hero).ToList());
             }
 
-            await _tierListSolutionStore.Update(model);
+            await _store.Update(model);
         }
     }
 }
