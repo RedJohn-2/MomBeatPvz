@@ -27,8 +27,8 @@ namespace MomBeatPvz.Persistence
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
-            //Database.EnsureDeleted();
-            //Database.EnsureCreated();
+            /*Database.EnsureDeleted();*/
+            Database.EnsureCreated();
         }
 
         public DbSet<TEntity> GetDbSet<TEntity>() where TEntity : class, IEntity

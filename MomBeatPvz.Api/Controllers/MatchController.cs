@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MomBeatPvz.Api.Contracts.Championship;
+using MomBeatPvz.Api.Contracts.Hero;
 using MomBeatPvz.Api.Contracts.Match;
 using MomBeatPvz.Application.Services;
 using MomBeatPvz.Application.Services.Interfaces;
@@ -25,29 +26,37 @@ namespace MomBeatPvz.Api.Controllers
 
         [HttpPost("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Create(MatchCreateRequestDto dto)
+        public async Task<ActionResult> Create(MatchCreateRequestDto dto, CancellationToken cancellationToken)
         {
             var model = new MatchCreateModel
             {
                 Championship = new Championship { Id = dto.ChampionshipId }
             };
 
-            await _matchService.CreateAsync(model);
+            await _matchService.CreateAsync(model, cancellationToken);
 
             return Ok();
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult> GetById(long id)
+        public async Task<ActionResult> GetById(long id, CancellationToken cancellationToken)
         {
-            var match = await _matchService.GetByIdAsync(id);
+            var match = await _matchService.GetByIdAsync(id, cancellationToken);
 
             return Ok(_mapper.Map<MatchResponseDto>(match));
         }
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetAll(CancellationToken cancellationToken)
+        {
+            var matches = await _matchService.GetAllAsync(cancellationToken);
+
+            return Ok(_mapper.Map<IReadOnlyCollection<MatchResponseDto>>(matches));
+        }
+
         [HttpPut("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Update(MatchUpdateRequestDto dto)
+        public async Task<ActionResult> Update(MatchUpdateRequestDto dto, CancellationToken cancellationToken)
         {
             var model = new MatchUpdateModel
             {
@@ -62,7 +71,7 @@ namespace MomBeatPvz.Api.Controllers
                 .ToList() : null
             };
 
-            await _matchService.UpdateAsync(model);
+            await _matchService.UpdateAsync(model, cancellationToken);
 
             return Ok();
         }

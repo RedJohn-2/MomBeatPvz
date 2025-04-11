@@ -30,7 +30,7 @@ namespace MomBeatPvz.Persistence.Operations
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Operate()
+        public async Task Operate(CancellationToken cancellationToken)
         {
             await _unitOfWork.InTransaction(async () =>
             {
@@ -39,23 +39,26 @@ namespace MomBeatPvz.Persistence.Operations
                     .Include(t => t.Result)
                     .Include(t => t.Solutions)
                     .ThenInclude(s => s.HeroPrices)
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
 
                 if (tierLists.Count == 0)
                 {
                     return;
                 }
 
-                var heroMap = await _db.Heroes.ToDictionaryAsync(h => h.Id, h => h);
+                var heroMap = await _db.Heroes.ToDictionaryAsync(h => h.Id, h => h, cancellationToken);
 
                 foreach (var tierList in tierLists)
                 {
-                    await RecalculateTierList(tierList, heroMap);
+                    await RecalculateTierList(tierList, heroMap, cancellationToken);
                 }
-            });
+            }, cancellationToken);
         }
 
-        public async Task RecalculateTierList(TierListEntity tierList, Dictionary<int, HeroEntity> heroMap)
+        public async Task RecalculateTierList(
+            TierListEntity tierList, 
+            Dictionary<int, HeroEntity> heroMap, 
+            CancellationToken cancellationToken)
         {
             var pricesMap = tierList.Solutions
                 .Where(s => s.OwnerId is not null)
@@ -101,7 +104,7 @@ namespace MomBeatPvz.Persistence.Operations
 
                 var entries = _db.ChangeTracker.Entries();
 
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync(cancellationToken);
             }
         }
     }

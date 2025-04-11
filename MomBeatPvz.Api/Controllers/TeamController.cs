@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MomBeatPvz.Api.Contracts.Championship;
+using MomBeatPvz.Api.Contracts.Hero;
 using MomBeatPvz.Api.Contracts.Team;
 using MomBeatPvz.Application.Services;
 using MomBeatPvz.Application.Services.Interfaces;
@@ -24,7 +25,7 @@ namespace MomBeatPvz.Api.Controllers
 
         [HttpPost("[action]")]
         [Authorize]
-        public async Task<ActionResult> Create(TeamCreateRequestDto dto)
+        public async Task<ActionResult> Create(TeamCreateRequestDto dto, CancellationToken cancellationToken)
         {
             var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);
 
@@ -36,22 +37,30 @@ namespace MomBeatPvz.Api.Controllers
                 Championship = new Championship { Id = dto.ChampionshipId }
             };
 
-            await _teamService.CreateAsync(model);
+            await _teamService.CreateAsync(model, cancellationToken);
 
             return Ok();
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult> GetById(long id)
+        public async Task<ActionResult> GetById(long id, CancellationToken cancellationToken)
         {
-            var team = await _teamService.GetByIdAsync(id);
+            var team = await _teamService.GetByIdAsync(id, cancellationToken);
 
             return Ok(_mapper.Map<TeamResponseDto>(team));
         }
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetAll(CancellationToken cancellationToken)
+        {
+            var teams = await _teamService.GetAllAsync(cancellationToken);
+
+            return Ok(_mapper.Map<IReadOnlyCollection<TeamResponseDto>>(teams));
+        }
+
 
         [HttpPut("[action]")]
         [Authorize]
-        public async Task<ActionResult> Update(TeamUpdateRequestDto dto)
+        public async Task<ActionResult> Update(TeamUpdateRequestDto dto, CancellationToken cancellationToken)
         {
             var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);
 
@@ -63,7 +72,7 @@ namespace MomBeatPvz.Api.Controllers
                 Heroes = dto.HeroIds is not null ? dto.HeroIds.Select(x => new Hero { Id = x }).ToList() : null,
             };
 
-            await _teamService.UpdateAsync(model);
+            await _teamService.UpdateAsync(model, cancellationToken);
 
             return Ok();
         }

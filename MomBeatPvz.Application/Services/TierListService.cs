@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Services.Abstract;
 using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Model;
@@ -16,14 +17,11 @@ namespace MomBeatPvz.Application.Services
         BaseService<TierList, TierListCreateModel, TierListUpdateModel, long, ITierListStore>,
         ITierListService
     {
-        public TierListService(ITierListStore tierListStore, IDistributedCache distributedCache) 
-            : base(tierListStore, distributedCache)
+        public TierListService(ITierListStore tierListStore, ICacheProvider cache) 
+            : base(tierListStore, cache)
         {
         }
 
-        public async Task<IReadOnlyCollection<TierList>> GetAllAsync()
-        {
-            return await _store.GetAll();
-        }
+        protected override string ModelName => nameof(TierList);
     }
 }

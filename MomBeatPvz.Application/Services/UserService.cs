@@ -26,26 +26,28 @@ namespace MomBeatPvz.Application.Services
             IUnitOfWork unitOfWork, 
             IJwtProvider jwtProvider, 
             IHashProvider hashProvider,
-            IDistributedCache distributedCache)
-            : base(userStore, distributedCache)
+            ICacheProvider cache)
+            : base(userStore, cache)
         {
             _unitOfWork = unitOfWork;
             _jwtProvider = jwtProvider;
             _hashProvider = hashProvider;
         }
 
-        public async Task<string> AuthAsync(long id, string username, DateTime expired, string hash)
+        protected override string ModelName => nameof(User);
+
+        public async Task<string> AuthAsync(long id, string username, DateTime expired, string hash, CancellationToken cancellationToken)
         {
             return await _unitOfWork.InTransaction(async () =>
             {
-                /*var authValid = _hashProvider.IsValid(id, username, expired, hash);
+                var authValid = _hashProvider.IsValid(id, username, expired, hash);
 
-                if (!authValid) 
+                if (!authValid)
                 {
                     throw new AuthenticationException();
-                }*/
+                }
 
-                var existedUser = await _store.GetById(id);
+                var existedUser = await _store.GetById(id, cancellationToken);
 
                 if (existedUser is null) 
                 {
@@ -55,20 +57,20 @@ namespace MomBeatPvz.Application.Services
                         Name = username
                     };
 
-                    await _store.Create(new UserCreateModel { Id = existedUser.Id, Name = existedUser.Name});
+                    await _store.Create(new UserCreateModel { Id = existedUser.Id, Name = existedUser.Name}, cancellationToken);
                 }
 
                 return _jwtProvider.GenerateAccessToken(existedUser);
                                     
-            });
+            }, cancellationToken);
         }
 
-        public override Task CreateAsync(UserCreateModel model)
+        public override Task CreateAsync(UserCreateModel model, CancellationToken cancellationToken)
         {
             throw new NotImplementedException("Невозможная операция!!!");
         }
 
-        public override Task UpdateAsync(UserUpdateModel model)
+        public override Task UpdateAsync(UserUpdateModel model, CancellationToken cancellationToken)
         {
             throw new NotImplementedException("Невозможная операция!!!");
         }

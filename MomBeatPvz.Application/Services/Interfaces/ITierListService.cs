@@ -13,6 +13,5 @@ namespace MomBeatPvz.Application.Services.Interfaces
     public interface ITierListService : 
         IService<TierList, TierListCreateModel, TierListUpdateModel, long>
     {
-        Task<IReadOnlyCollection<TierList>> GetAllAsync();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Services.Abstract;
 using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Exceptions;
@@ -19,22 +20,24 @@ namespace MomBeatPvz.Application.Services
     {
         private readonly ITeamService _teamService;
 
+        protected override string ModelName => nameof(Match);
+
         public MatchService(
             IMatchStore matchStore,
-            IDistributedCache distributedCache,
-            ITeamService teamService) : base(matchStore, distributedCache)
+            ICacheProvider cache,
+            ITeamService teamService) : base(matchStore, cache)
         {
             _teamService = teamService;
         }
 
-        public async override Task UpdateAsync(MatchUpdateModel model)
+        public async override Task UpdateAsync(MatchUpdateModel model, CancellationToken cancellationToken)
         {
             if (model.Results is not null)
             {
                 _teamService.CheckDuplicates(model.Results.Select(x => x.Team).ToList());
             }
 
-            await base.UpdateAsync(model);
+            await base.UpdateAsync(model, cancellationToken);
         }
 
         public void CheckDuplicates(List<Match> matches)

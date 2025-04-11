@@ -7,18 +7,14 @@ using MomBeatPvz.Core.Enums;
 
 namespace MomBeatPvz.Api.Contracts.Championship
 {
-    public record ChampionshipResponseDto(
+    public record ChampionshipRowResponseDto(
         long Id,
         string Name,
         string Description,
         int TeamPrice,
         ChampionshipStage Stage,
         ChampionshipFormat Format,
-        TierListMainInfoResponseDto TierList,
         DateTime? StartDate,
         DateTime? EndDate,
-        TeamResponseDto[] Teams,
-        MatchResponseDto[] Matches,
-        HeroResponseDto[] Heroes,
         UserResponseDto Creator);
 }

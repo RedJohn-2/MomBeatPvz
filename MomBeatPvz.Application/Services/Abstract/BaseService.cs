@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Core.Model;
 using MomBeatPvz.Core.Model.Abstract;
 using MomBeatPvz.Core.ModelCreate.Abstract;
@@ -14,39 +15,40 @@ using System.Threading.Tasks;
 
 namespace MomBeatPvz.Application.Services.Abstract
 {
-    public class BaseService<M, C, U, I, S> : IService<M, C, U, I>
+    public abstract class BaseService<M, C, U, I, S> : IService<M, C, U, I>
         where M : IModel<I>
         where C : ICreateModel<M>
         where U : IUpdateModel<M, I>
         where S : IStore<M, C, U, I>
     {
         protected readonly S _store;
-        protected readonly IDistributedCache _distributedCache;
+        protected readonly ICacheProvider _cache;
+        protected abstract string ModelName { get; }
 
-        public BaseService(S store, IDistributedCache distributedCache)
+        public BaseService(S store, ICacheProvider cache)
         {
             _store = store;
-            _distributedCache = distributedCache;
+            _cache = cache;
         }
 
-        public virtual async Task CreateAsync(C model)
+        public virtual async Task CreateAsync(C model, CancellationToken cancellationToken)
         {
-            await _store.Create(model);
+            await _store.Create(model, cancellationToken);
         }
 
-        public virtual async Task<M?> GetByIdAsync(I id)
+        public virtual async Task<M?> GetByIdAsync(I id, CancellationToken cancellationToken)
         {
-            var cacheKey = $"{nameof(M).ToLower()}-{id}";
+            var cacheKey = $"{ModelName.ToLower()}-{id}";
 
-            var stringData = await _distributedCache.GetStringAsync(cacheKey);
+            var stringData = await _cache.Get(cacheKey, cancellationToken);
 
             if (string.IsNullOrEmpty(stringData))
             {
-                var model = await _store.GetById(id);
+                var model = await _store.GetById(id, cancellationToken);
 
                 if (model is not null)
                 {
-                    await _distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(model));
+                    await _cache.Set(cacheKey, JsonSerializer.Serialize(model), cancellationToken);
                 }
 
                 return model;
@@ -55,9 +57,35 @@ namespace MomBeatPvz.Application.Services.Abstract
             return JsonSerializer.Deserialize<M>(stringData!);
         }
 
-        public virtual async Task UpdateAsync(U model)
+        public virtual async Task UpdateAsync(U model, CancellationToken cancellationToken)
         {
-            await _store.Update(model);
+            await _store.Update(model, cancellationToken);
+        }
+
+        public virtual async Task<IReadOnlyCollection<M>> GetAllAsync(CancellationToken cancellationToken)
+        {
+            var cacheKey = $"{ModelName.ToLower()}-all";
+
+            var stringData = await _cache.Get(cacheKey, cancellationToken);
+
+            if (string.IsNullOrEmpty(stringData))
+            {
+                var list = await _store.GetAll(cancellationToken);
+
+                if (list is not null)
+                {
+                    await _cache.Set(cacheKey, JsonSerializer.Serialize(list), cancellationToken);
+                }
+
+                return list ?? [];
+            }
+
+            return JsonSerializer.Deserialize<List<M>>(stringData)!;
+        }
+
+        public virtual async Task DeleteAsync(I id, CancellationToken cancellationToken)
+        {
+            await _store.Delete(id, cancellationToken);
         }
     }
 }

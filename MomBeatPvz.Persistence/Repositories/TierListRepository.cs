@@ -24,43 +24,43 @@ namespace MomBeatPvz.Persistence.Repositories
         {
         }
 
-        public override async Task<IReadOnlyList<TierList>> GetAll()
+        public override async Task<IReadOnlyCollection<TierList>> GetAll(CancellationToken cancellationToken)
         {
             var existedTierLists = await _db.TierLists
-                .Include(t => t.Creator)
-                .ToListAsync();
+                .Include(x => x.Creator)
+                .ToListAsync(cancellationToken);
 
-            return _mapper.Map<IReadOnlyList<TierList>>(existedTierLists);
+            return _mapper.Map<IReadOnlyCollection<TierList>>(existedTierLists);
         }
 
-        public override async Task<TierList> GetById(long id)
+        public override async Task<TierList> GetById(long id, CancellationToken cancellationToken)
         {
             var existedTierList = await _db.TierLists
                 .Include(t => t.Creator)
                 .Include(t => t.Championship)
                 .ThenInclude(c => c.Heroes)
-                .FirstOrDefaultAsync(t => t.Id == id);
+                .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 
             return _mapper.Map<TierList>(existedTierList);
         }
 
-        public async Task<IReadOnlyList<TierList>> GetByName(string name)
+        public async Task<IReadOnlyCollection<TierList>> GetByName(string name, CancellationToken cancellationToken)
         {
             var existedTierLists = await _db.TierLists
                 .Include(t => t.Creator)
                 .Where(t => t.Name == name)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-            return _mapper.Map<IReadOnlyList<TierList>>(existedTierLists);
+            return _mapper.Map<IReadOnlyCollection<TierList>>(existedTierLists);
         }
 
-        public override async Task Update(TierListUpdateModel model)
+        public override async Task Update(TierListUpdateModel model, CancellationToken cancellationToken)
         {
             await _unitOfWork.InTransaction(async () =>
             {
                 var existed = await _db.TierLists
                 .Include(x => x.Creator)
-                .FirstOrDefaultAsync(x => x.Id!.Equals(model.Id))
+                .FirstOrDefaultAsync(x => x.Id!.Equals(model.Id), cancellationToken)
                 ?? throw new NotFoundException();
 
                 if (existed.Creator.Id != model.AuthorId)
@@ -72,8 +72,8 @@ namespace MomBeatPvz.Persistence.Repositories
 
                 var entries = _db.ChangeTracker.Entries();
 
-                await _db.SaveChangesAsync();
-            });
+                await _db.SaveChangesAsync(cancellationToken);
+            }, cancellationToken);
         }
     }
 }

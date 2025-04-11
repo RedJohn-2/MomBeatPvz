@@ -13,7 +13,7 @@ namespace MomBeatPvz.Core.Store
     public interface ITierListSolutionStore : 
         IStore<TierListSolution, TierListSolutionCreateModel, TierListSolutionUpdateModel, long>
     {
-        Task<IReadOnlyList<TierListSolution>> GetByTierListId(long id);
+        Task<IReadOnlyCollection<TierListSolution>> GetByTierListId(long id, CancellationToken cancellationToken);
 
     }
 }

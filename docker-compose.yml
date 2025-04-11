@@ -16,10 +16,11 @@ services:
   db:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
-      POSRGRES_USER: postgres
-      POSTGRES_PASSWORD: QuasWexExort228
+      - POSTGRES_DB=pvz_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=QuasWexExort228
     volumes:
       - db_data:/var/lib/postgresql/data
     container_name: db_postgresql_container

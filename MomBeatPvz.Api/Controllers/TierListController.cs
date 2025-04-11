@@ -28,7 +28,7 @@ namespace MomBeatPvz.Api.Controllers
 
         [HttpPost("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Create(TierListCreateRequestDto dto)
+        public async Task<ActionResult> Create(TierListCreateRequestDto dto, CancellationToken cancellationToken)
         {
             var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);
 
@@ -45,24 +45,32 @@ namespace MomBeatPvz.Api.Controllers
                 Creator = creator
             };
 
-            await _tierListService.CreateAsync(model);
+            await _tierListService.CreateAsync(model, cancellationToken);
 
             return Ok();
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult> GetById(int id)
+        public async Task<ActionResult> GetById(int id, CancellationToken cancellationToken)
         {
-            var tierList = await _tierListService.GetByIdAsync(id);
+            var tierList = await _tierListService.GetByIdAsync(id, cancellationToken);
 
             var dto = _mapper.Map<TierListResponseDto>(tierList);
 
             return Ok(dto);
         }
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetAll(CancellationToken cancellationToken)
+        {
+            var tierLists = await _tierListService.GetAllAsync(cancellationToken);
+
+            return Ok(_mapper.Map<IReadOnlyCollection<TierListRowResponseDto>>(tierLists));
+        }
+
         [HttpPut("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Update(TierListUpdateRequestDto dto)
+        public async Task<ActionResult> Update(TierListUpdateRequestDto dto, CancellationToken cancellationToken)
         {
             var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);
 
@@ -76,7 +84,7 @@ namespace MomBeatPvz.Api.Controllers
                 MaxPrice = dto.MaxPrice
             };
 
-            await _tierListService.UpdateAsync(model);
+            await _tierListService.UpdateAsync(model, cancellationToken);
 
             return Ok();
         }

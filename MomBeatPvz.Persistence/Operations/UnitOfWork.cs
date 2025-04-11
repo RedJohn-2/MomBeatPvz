@@ -11,39 +11,39 @@ namespace MomBeatPvz.Persistence.Operations
             _db = db; 
         }
 
-        public async Task InTransaction(Func<Task> action)
+        public async Task InTransaction(Func<Task> action, CancellationToken cancellationToken)
         {
-            await using var transaction = await _db.Database.BeginTransactionAsync();
+            await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
 
             try
             {
                 await action();
 
-                await transaction.CommitAsync();
+                await transaction.CommitAsync(cancellationToken);
             }
             catch (Exception)
             {
-                await transaction.RollbackAsync();
+                await transaction.RollbackAsync(cancellationToken);
 
                 throw;
             }
         }     
 
-        public async Task<T> InTransaction<T>(Func<Task<T>> action)
+        public async Task<T> InTransaction<T>(Func<Task<T>> action, CancellationToken cancellationToken)
         {
-            await using var transaction = await _db.Database.BeginTransactionAsync();
+            await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
 
             try
             {
                 var result = await action();
 
-                await transaction.CommitAsync();
+                await transaction.CommitAsync(cancellationToken);
 
                 return result;
             }
             catch (Exception)
             {
-                await transaction.RollbackAsync();
+                await transaction.RollbackAsync(cancellationToken);
 
                 throw;
             }

@@ -18,18 +18,18 @@ namespace MomBeatPvz.Persistence.Repositories
         {
         }
 
-        public override Task Update(UserUpdateModel model)
+        public override Task Update(UserUpdateModel model, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override async Task Create(UserCreateModel model)
+        public override async Task Create(UserCreateModel model, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<UserEntity>(model);
 
-            await _db.AddAsync(entity);
+            await _db.AddAsync(entity, cancellationToken);
 
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(cancellationToken);
         }
     }
 }

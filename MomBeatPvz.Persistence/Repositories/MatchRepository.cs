@@ -25,7 +25,7 @@ namespace MomBeatPvz.Persistence.Repositories
         {
         }
 
-        public async override Task Create(MatchCreateModel model)
+        public async override Task Create(MatchCreateModel model, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<MatchEntity>(model);
 
@@ -37,33 +37,37 @@ namespace MomBeatPvz.Persistence.Repositories
 
             entries = _db.ChangeTracker.Entries();
 
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(cancellationToken);
         }
 
-        public async override Task<Match> GetById(long id)
+        public async override Task<Match> GetById(long id, CancellationToken cancellationToken)
         {
             var existed = await _db.Matches
-                .Include(m => m.Results)
-                .FirstOrDefaultAsync(x => x.Id!.Equals(id));
+                .Include(x => x.Results)
+                .ThenInclude(x => x.Team)
+                .FirstOrDefaultAsync(x => x.Id!.Equals(id), cancellationToken);
 
             return _mapper.Map<Match>(existed);
         }
 
-        public async override Task<IReadOnlyList<Match>> GetAll()
+        public async override Task<IReadOnlyCollection<Match>> GetAll(CancellationToken cancellationToken)
         {
-            var entities = await _db.Matches.ToListAsync();
+            var entities = await _db.Matches
+                .Include(x => x.Results)
+                .ThenInclude(x => x.Team)
+                .ToListAsync(cancellationToken);
 
-            return _mapper.Map<IReadOnlyList<Match>>(entities);
+            return _mapper.Map<IReadOnlyCollection<Match>>(entities);
         }
 
-        public async override Task Update(MatchUpdateModel model)
+        public async override Task Update(MatchUpdateModel model, CancellationToken cancellationToken)
         {
             await _unitOfWork.InTransaction(async () =>
             {
                 var existedMatch = await _db.Matches
                     .Include(x => x.Championship)
                     .Include(x => x.Results)
-                    .FirstOrDefaultAsync(s => s.Id == model.Id)
+                    .FirstOrDefaultAsync(s => s.Id == model.Id, cancellationToken)
                     ?? throw new NotFoundException();
 
                 _mapper.Map(model, existedMatch);
@@ -78,16 +82,16 @@ namespace MomBeatPvz.Persistence.Repositories
 
                     existedMatch.Results.ForEach(x => x.Team = teamsMap[x.Team.Id]);
 
-                    await ValidateTeams(existedMatch);
+                    await ValidateTeams(existedMatch, cancellationToken);
                 }                
 
                 var entries = _db.ChangeTracker.Entries();
 
-                await _db.SaveChangesAsync();
-            });
+                await _db.SaveChangesAsync(cancellationToken);
+            }, cancellationToken);
         }
 
-        private async Task ValidateTeams(MatchEntity entity)
+        private async Task ValidateTeams(MatchEntity entity, CancellationToken cancellationToken)
         {
             var teamInMatchIds = entity.Results.Select(x => x.Team.Id).ToArray();
 
@@ -95,7 +99,7 @@ namespace MomBeatPvz.Persistence.Repositories
                 .Where(x => x.Id == entity.Championship.Id)
                 .SelectMany(x => x.Teams)
                 .Select(x => x.Id)
-                .ToArrayAsync();
+                .ToArrayAsync(cancellationToken);
 
             if (!teamInMatchIds.All(x => teamInChampionshipIds.Contains(x)))
             {

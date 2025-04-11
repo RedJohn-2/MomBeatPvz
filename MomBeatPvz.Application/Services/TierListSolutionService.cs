@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Operations.UnitOfWork;
 using MomBeatPvz.Application.Services.Abstract;
 using MomBeatPvz.Application.Services.Interfaces;
@@ -24,38 +25,34 @@ namespace MomBeatPvz.Application.Services
         public TierListSolutionService(
             ITierListSolutionStore tierListSolutionStore,
             IHeroService heroService,
-            IDistributedCache distributedCache)
-            : base(tierListSolutionStore, distributedCache)
+            ICacheProvider cache)
+            : base(tierListSolutionStore, cache)
         {
             _heroService = heroService;
         }
 
-        public async override Task CreateAsync(TierListSolutionCreateModel model)
+        protected override string ModelName => nameof(TierListSolution);
+
+        public async override Task CreateAsync(TierListSolutionCreateModel model, CancellationToken cancellationToken)
         {
             _heroService.CheckDuplicates(model.HeroPrices.Select(x => x.Hero).ToList());
 
-            await base.CreateAsync(model);
+            await base.CreateAsync(model, cancellationToken);
         }
 
-
-        public async Task<IReadOnlyList<TierListSolution>> GetAllAsync()
+        public async Task<IReadOnlyCollection<TierListSolution>> GetByTierListIdAsync(long id, CancellationToken cancellationToken)
         {
-            return await _store.GetAll();
+            return await _store.GetByTierListId(id, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TierListSolution>> GetByTierListIdAsync(long id)
-        {
-            return await _store.GetByTierListId(id);
-        }
-
-        public async override Task UpdateAsync(TierListSolutionUpdateModel model)
+        public async override Task UpdateAsync(TierListSolutionUpdateModel model, CancellationToken cancellationToken)
         {
             if (model.HeroPrices is not null)
             {
                 _heroService.CheckDuplicates(model.HeroPrices.Select(x => x.Hero).ToList());
             }
 
-            await _store.Update(model);
+            await _store.Update(model, cancellationToken);
         }
     }
 }

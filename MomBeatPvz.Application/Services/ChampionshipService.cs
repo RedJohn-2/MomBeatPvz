@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Services.Abstract;
 using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Model;
@@ -22,24 +23,26 @@ namespace MomBeatPvz.Application.Services
 
         public ChampionshipService(
             IChampionshipStore championshipStore, 
-            IDistributedCache distributedCache,
+            ICacheProvider cache,
             IHeroService heroService, 
             ITeamService teamService, 
-            IMatchService matchService) : base(championshipStore, distributedCache)
+            IMatchService matchService) : base(championshipStore, cache)
         {
             _heroService = heroService;
             _teamService = teamService;
             _matchService = matchService;
         }
 
-        public async override Task CreateAsync(ChampionshipCreateModel model)
+        protected override string ModelName => nameof(Championship);
+
+        public async override Task CreateAsync(ChampionshipCreateModel model, CancellationToken cancellationToken)
         {
             _heroService.CheckDuplicates(model.Heroes);
 
-            await base.CreateAsync(model);
+            await base.CreateAsync(model, cancellationToken);
         }
 
-        public async override Task UpdateAsync(ChampionshipUpdateModel model)
+        public async override Task UpdateAsync(ChampionshipUpdateModel model, CancellationToken cancellationToken)
         {
             if (model.Heroes is not null)
             {
@@ -56,7 +59,7 @@ namespace MomBeatPvz.Application.Services
                 _matchService.CheckDuplicates(model.Matches);
             }
 
-            await base.UpdateAsync(model);
+            await base.UpdateAsync(model, cancellationToken);
         }
     }
 }

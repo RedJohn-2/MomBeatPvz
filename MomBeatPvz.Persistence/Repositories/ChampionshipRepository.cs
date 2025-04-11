@@ -24,14 +24,14 @@ namespace MomBeatPvz.Persistence.Repositories
         {
         }
 
-        public async override Task Update(ChampionshipUpdateModel model)
+        public async override Task Update(ChampionshipUpdateModel model, CancellationToken cancellationToken)
         {
             await _unitOfWork.InTransaction(async () =>
             {
                 var existed = await _db.Championships
                 .Include(x => x.Heroes)
                 .Include(x => x.Creator)
-                .FirstOrDefaultAsync(x => x.Id!.Equals(model.Id))
+                .FirstOrDefaultAsync(x => x.Id!.Equals(model.Id), cancellationToken)
                 ?? throw new NotFoundException();
 
                 if (existed.Creator.Id != model.AuthorId)
@@ -92,11 +92,11 @@ namespace MomBeatPvz.Persistence.Repositories
 
                 var entries = _db.ChangeTracker.Entries();
 
-                await _db.SaveChangesAsync();
-            });
+                await _db.SaveChangesAsync(cancellationToken);
+            }, cancellationToken);
         }
 
-        public async override Task<Championship> GetById(long id)
+        public async override Task<Championship> GetById(long id, CancellationToken cancellationToken)
         {
             var existed = await _db.Championships
                 .Include(c => c.TierList)
@@ -104,9 +104,18 @@ namespace MomBeatPvz.Persistence.Repositories
                 .Include(c => c.Heroes)
                 .Include(c => c.Matches)
                 .Include(c => c.Teams)
-                .FirstOrDefaultAsync(x => x.Id!.Equals(id));
+                .FirstOrDefaultAsync(x => x.Id!.Equals(id), cancellationToken);
 
             return _mapper.Map<Championship>(existed);
+        }
+
+        public async override Task<IReadOnlyCollection<Championship>> GetAll(CancellationToken cancellationToken)
+        {
+            var entities = await _db.Championships
+                .Include(x => x.Creator)
+                .ToListAsync(cancellationToken);
+
+            return _mapper.Map<IReadOnlyCollection<Championship>>(entities);
         }
     }
 }

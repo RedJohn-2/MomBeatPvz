@@ -22,6 +22,7 @@ namespace MomBeatPvz.Persistence.Repositories
     {
         public HeroRepository(ApplicationContext db, IMapper mapper, IUnitOfWork unitOfWork) : base(db, mapper, unitOfWork)
         {
+
         }
     }
 }

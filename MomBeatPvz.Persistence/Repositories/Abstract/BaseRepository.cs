@@ -36,7 +36,7 @@ namespace MomBeatPvz.Persistence.Repositories.Abstract
             _unitOfWork = unitOfWork;
         }
 
-        public virtual async Task Create(C model)
+        public virtual async Task Create(C model, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<E>(model);
 
@@ -44,52 +44,52 @@ namespace MomBeatPvz.Persistence.Repositories.Abstract
 
             var entries = _db.ChangeTracker.Entries();
 
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(cancellationToken);
         }
 
-        public virtual async Task Delete(I id)
+        public virtual async Task Delete(I id, CancellationToken cancellationToken)
         {
             await _db.GetDbSet<E>()
                 .Where(x => x.Id!.Equals(id))
-                .ExecuteDeleteAsync();
+                .ExecuteDeleteAsync(cancellationToken);
         }
 
-        public virtual async Task<bool> Exist(I id)
+        public virtual async Task<bool> Exist(I id, CancellationToken cancellationToken)
         {
             return await _db.GetDbSet<E>()
                 .Where(x => x.Id!.Equals(id))
-                .AnyAsync();
+                .AnyAsync(cancellationToken);
         }
 
-        public virtual async Task<IReadOnlyList<M>> GetAll()
+        public virtual async Task<IReadOnlyCollection<M>> GetAll(CancellationToken cancellationToken)
         {
-            var entities = await _db.GetDbSet<E>().ToListAsync();
+            var entities = await _db.GetDbSet<E>().ToListAsync(cancellationToken);
 
-            return _mapper.Map<IReadOnlyList<M>>(entities);
+            return _mapper.Map<IReadOnlyCollection<M>>(entities);
         }
 
-        public virtual async Task<M> GetById(I id)
+        public virtual async Task<M> GetById(I id, CancellationToken cancellationToken)
         {
             var existed = await _db.GetDbSet<E>()
-                .FirstOrDefaultAsync(x => x.Id!.Equals(id));
+                .FirstOrDefaultAsync(x => x.Id!.Equals(id), cancellationToken);
 
             return _mapper.Map<M>(existed);
         }
 
-        public virtual async Task Update(U model)
+        public virtual async Task Update(U model, CancellationToken cancellationToken)
         {
             await _unitOfWork.InTransaction(async () =>
             {
                 var existed = await _db.GetDbSet<E>()
-                .FirstOrDefaultAsync(x => x.Id!.Equals(model.Id))
+                .FirstOrDefaultAsync(x => x.Id!.Equals(model.Id), cancellationToken)
                 ?? throw new NotFoundException();
 
                 _mapper.Map(model, existed);
 
                 var entries = _db.ChangeTracker.Entries();
 
-                await _db.SaveChangesAsync();
-            });  
+                await _db.SaveChangesAsync(cancellationToken);
+            }, cancellationToken);  
         }
     }
 }

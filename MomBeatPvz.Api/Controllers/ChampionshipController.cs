@@ -27,7 +27,7 @@ namespace MomBeatPvz.Api.Controllers
 
         [HttpPost("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Create(ChampionshipCreateRequestDto dto)
+        public async Task<ActionResult> Create(ChampionshipCreateRequestDto dto, CancellationToken cancellationToken)
         {
             var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);
 
@@ -43,22 +43,30 @@ namespace MomBeatPvz.Api.Controllers
                 Creator = new User { Id = userId }
             };
 
-            await _championshipService.CreateAsync(model);
+            await _championshipService.CreateAsync(model, cancellationToken);
 
             return Ok();
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult> GetById(long id)
+        public async Task<ActionResult> GetById(long id, CancellationToken cancellationToken)
         {
-            var championship = await _championshipService.GetByIdAsync(id);
+            var championship = await _championshipService.GetByIdAsync(id, cancellationToken);
 
             return Ok(_mapper.Map<ChampionshipResponseDto>(championship));
         }
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetAll(CancellationToken cancellationToken)
+        {
+            var championships = await _championshipService.GetAllAsync(cancellationToken);
+
+            return Ok(_mapper.Map<IReadOnlyCollection<ChampionshipRowResponseDto>>(championships));
+        }
+
         [HttpPut("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Update(ChampionshipUpdateRequestDto dto)
+        public async Task<ActionResult> Update(ChampionshipUpdateRequestDto dto, CancellationToken cancellationToken)
         {
             var userId = long.Parse(User.Claims.FirstOrDefault(i => i.Type == "user_id")!.Value);
 
@@ -77,7 +85,7 @@ namespace MomBeatPvz.Api.Controllers
                 Heroes = dto.HeroIds is not null ? dto.HeroIds.Select(x => new Hero { Id = x }).ToList() : null,
             };
 
-            await _championshipService.UpdateAsync(model);
+            await _championshipService.UpdateAsync(model, cancellationToken);
 
             return Ok();
         }

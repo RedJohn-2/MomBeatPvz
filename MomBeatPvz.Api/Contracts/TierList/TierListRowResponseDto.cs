@@ -1,4 +1,5 @@
-﻿using MomBeatPvz.Api.Contracts.TierListSolution;
+﻿using MomBeatPvz.Api.Contracts.Hero;
+using MomBeatPvz.Api.Contracts.TierListSolution;
 using MomBeatPvz.Api.Contracts.User;
 
 namespace MomBeatPvz.Api.Contracts.TierList
@@ -7,7 +8,8 @@ namespace MomBeatPvz.Api.Contracts.TierList
         long Id,
         string Name,
         string Description,
-        TierListSolutionResponseDto Result,
+        int MinPrice,
+        int MaxPrice,
         DateTime Created,
-        long ChampionshipId);
+        UserResponseDto Creator);
 }

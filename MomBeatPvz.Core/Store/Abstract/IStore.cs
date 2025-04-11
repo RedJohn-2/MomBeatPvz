@@ -9,16 +9,16 @@ namespace MomBeatPvz.Core.Store.Abstract
         where C : ICreateModel<M>
         where U : IUpdateModel<M, I>
     {
-        Task Create(C model);
+        Task Create(C model, CancellationToken cancellationToken);
 
-        Task Update(U model);
+        Task Update(U model, CancellationToken cancellationToken);
 
-        Task Delete(I id);
+        Task Delete(I id, CancellationToken cancellationToken);
 
-        Task<M> GetById(I id);
+        Task<M> GetById(I id, CancellationToken cancellationToken);
 
-        Task<IReadOnlyList<M>> GetAll();
+        Task<IReadOnlyCollection<M>> GetAll(CancellationToken cancellationToken);
 
-        Task<bool> Exist(I id);
+        Task<bool> Exist(I id, CancellationToken cancellationToken);
     }
 }

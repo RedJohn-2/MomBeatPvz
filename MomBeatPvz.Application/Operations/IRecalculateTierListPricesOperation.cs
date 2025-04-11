@@ -8,6 +8,6 @@ namespace MomBeatPvz.Application.Operations
 {
     public interface IRecalculateTierListPricesOperation
     {
-        Task Operate();
+        Task Operate(CancellationToken cancellationToken);
     }
 }

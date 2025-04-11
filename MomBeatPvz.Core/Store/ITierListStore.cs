@@ -11,7 +11,7 @@ namespace MomBeatPvz.Core.Store
 {
     public interface ITierListStore : IStore<TierList, TierListCreateModel, TierListUpdateModel, long>
     {
-        Task<IReadOnlyList<TierList>> GetByName(string name);
+        Task<IReadOnlyCollection<TierList>> GetByName(string name, CancellationToken cancellationToken);
 
     }
 }

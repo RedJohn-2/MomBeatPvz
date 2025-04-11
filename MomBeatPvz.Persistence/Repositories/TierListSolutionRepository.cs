@@ -25,14 +25,14 @@ namespace MomBeatPvz.Persistence.Repositories
         {
         }
 
-        public override async Task Create(TierListSolutionCreateModel model)
+        public override async Task Create(TierListSolutionCreateModel model, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<TierListSolutionEntity>(model);
 
             await _unitOfWork.InTransaction(async () =>
             {
                 var championship = await _db.Championships
-                    .FirstOrDefaultAsync(x => x.TierListId == entity.TierList.Id)
+                    .FirstOrDefaultAsync(x => x.TierListId == entity.TierList.Id, cancellationToken)
                     ?? throw new NotFoundException();
 
                 if (championship.Stage != ChampionshipStage.TierListVouting)
@@ -42,14 +42,14 @@ namespace MomBeatPvz.Persistence.Repositories
 
                 var solutionExist = await _db.TierListSolutions
                     .Where(x => x.TierListId == entity.TierList.Id && x.OwnerId == entity.Owner!.Id)
-                    .AnyAsync();
+                    .AnyAsync(cancellationToken);
 
                 if (solutionExist)
                 {
                     throw new DuplicateException("Ваше решение для данного тирлиста уже существует! Измените существующее решение!");
                 }
                
-                await ValidateHeroes(entity);
+                await ValidateHeroes(entity, cancellationToken);
 
                 _db.Entry(entity.TierList).State = EntityState.Unchanged;
 
@@ -57,11 +57,11 @@ namespace MomBeatPvz.Persistence.Repositories
 
                 var entries = _db.ChangeTracker.Entries();
 
-                await _db.SaveChangesAsync();
-            });
+                await _db.SaveChangesAsync(cancellationToken);
+            }, cancellationToken);
         }
 
-        private async Task ValidateHeroes(TierListSolutionEntity entity)
+        private async Task ValidateHeroes(TierListSolutionEntity entity, CancellationToken cancellationToken)
         {
             var heroInSolutionIds = entity.HeroPrices.Select(x => x.Hero.Id).ToArray();
 
@@ -69,7 +69,7 @@ namespace MomBeatPvz.Persistence.Repositories
                 .Where(x => x.Id == entity.TierListId)
                 .SelectMany(x => x.Championship.Heroes)
                 .Select(x => x.Id)
-                .ToArrayAsync();
+                .ToArrayAsync(cancellationToken);
 
             if (!heroInSolutionIds.All(x => heroesInTierListIds.Contains(x)))
             {
@@ -77,45 +77,48 @@ namespace MomBeatPvz.Persistence.Repositories
             }
         }
 
-        public override async Task<IReadOnlyList<TierListSolution>> GetAll()
+        public override async Task<IReadOnlyCollection<TierListSolution>> GetAll(CancellationToken cancellationToken)
         {
             var solutionEntities = await _db.TierListSolutions
-                .Include(s => s.Owner)
-                .Include(s => s.HeroPrices)
-                .ToListAsync();
+                .Include(x => x.Owner)
+                .Include(x => x.HeroPrices)
+                .ThenInclude(x => x.Hero)
+                .ToListAsync(cancellationToken);
 
             return _mapper.Map<List<TierListSolution>>(solutionEntities);
         }
 
-        public override async Task<TierListSolution> GetById(long id)
+        public override async Task<TierListSolution> GetById(long id, CancellationToken cancellationToken)
         {
             var solutionEntity = await _db.TierListSolutions
-                .Include(s => s.Owner)
-                .Include(s => s.HeroPrices)
-                .FirstOrDefaultAsync(s => s.Id == id);
+                .Include(x => x.Owner)
+                .Include(x => x.HeroPrices)
+                .ThenInclude(x => x.Hero)
+                .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 
             return _mapper.Map<TierListSolution>(solutionEntity);
         }
 
-        public async Task<IReadOnlyList<TierListSolution>> GetByTierListId(long id)
+        public async Task<IReadOnlyCollection<TierListSolution>> GetByTierListId(long id, CancellationToken cancellationToken)
         {
             var solutionEntities = await _db.TierListSolutions
-                .Where(s => s.TierList.Id == id)
-                .Include(s => s.Owner)
-                .Include(s => s.HeroPrices)
-                .ToListAsync();
+                .Where(x => x.TierList.Id == id)
+                .Include(x => x.Owner)
+                .Include(x => x.HeroPrices)
+                .ThenInclude(x => x.Hero)
+                .ToListAsync(cancellationToken);
 
             return _mapper.Map<List<TierListSolution>>(solutionEntities);
         }
 
-        public override async Task Update(TierListSolutionUpdateModel model)
+        public override async Task Update(TierListSolutionUpdateModel model, CancellationToken cancellationToken)
         {
             await _unitOfWork.InTransaction(async () =>
             {
                 var existedSolution = await _db.TierListSolutions
                     .Include(x => x.HeroPrices)
-                   .FirstOrDefaultAsync(s => s.Id == model.Id)
-                   ?? throw new NotFoundException();
+                    .FirstOrDefaultAsync(s => s.Id == model.Id, cancellationToken)
+                    ?? throw new NotFoundException();
 
                 if (existedSolution.OwnerId != model.AuthorId)
                 {
@@ -128,7 +131,7 @@ namespace MomBeatPvz.Persistence.Repositories
 
                 if (model.HeroPrices is not null)
                 {
-                    await ValidateHeroes(existedSolution);
+                    await ValidateHeroes(existedSolution, cancellationToken);
 
                     entries = _db.ChangeTracker.Entries();
 
@@ -137,8 +140,8 @@ namespace MomBeatPvz.Persistence.Repositories
 
                 entries = _db.ChangeTracker.Entries();
 
-                await _db.SaveChangesAsync();
-            });
+                await _db.SaveChangesAsync(cancellationToken);
+            }, cancellationToken);
         }
     }
 }

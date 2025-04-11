@@ -1,4 +1,4 @@
-﻿namespace MomBeatPvz.Api.Contracts
+﻿namespace MomBeatPvz.Api.Contracts.User
 {
     public class UserAuthRequest
     {

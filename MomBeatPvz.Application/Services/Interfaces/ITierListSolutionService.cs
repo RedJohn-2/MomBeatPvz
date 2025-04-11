@@ -13,8 +13,6 @@ namespace MomBeatPvz.Application.Services.Interfaces
     public interface ITierListSolutionService :
         IService<TierListSolution, TierListSolutionCreateModel, TierListSolutionUpdateModel, long>
     {
-        Task<IReadOnlyList<TierListSolution>> GetAllAsync();
-
-        Task<IReadOnlyList<TierListSolution>> GetByTierListIdAsync(long id);
+        Task<IReadOnlyCollection<TierListSolution>> GetByTierListIdAsync(long id, CancellationToken cancellationToken);
     }
 }

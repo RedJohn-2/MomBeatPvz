@@ -35,7 +35,9 @@ namespace MomBeatPvz.Api.Mapping
                                                 opt.MapFrom(src => src.Championship.Heroes
                                                 .Select(x => new HeroResponseDto(x.Id, x.Name, x.Url)).ToArray()));
 
-            CreateMap<TierList, TierListRowResponseDto>()
+            CreateMap<TierList, TierListRowResponseDto>();
+
+            CreateMap<TierList, TierListMainInfoResponseDto>()
                 .ForMember(dest => dest.ChampionshipId, opt => opt.MapFrom(src => src.Championship.Id));
 
             CreateMap<Team, TeamResponseDto>()
@@ -50,6 +52,8 @@ namespace MomBeatPvz.Api.Mapping
                                                     x => x.Score)));
 
             CreateMap<Championship, ChampionshipResponseDto>();
+
+            CreateMap<Championship, ChampionshipRowResponseDto>();
         }
     }
 }

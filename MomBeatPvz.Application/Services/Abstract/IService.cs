@@ -15,10 +15,12 @@ namespace MomBeatPvz.Application.Services.Abstract
         where C : ICreateModel<M>
         where U : IUpdateModel<M, I>
     {
-        Task CreateAsync(C model);
+        Task CreateAsync(C model, CancellationToken cancellationToken);
 
-        Task UpdateAsync(U model);
+        Task UpdateAsync(U model, CancellationToken cancellationToken);
 
-        Task<M?> GetByIdAsync(I id);
+        Task<M?> GetByIdAsync(I id, CancellationToken cancellationToken);
+
+        Task<IReadOnlyCollection<M>> GetAllAsync(CancellationToken cancellationToken);
     }
 }

@@ -12,10 +12,8 @@ using System.Threading.Tasks;
 namespace MomBeatPvz.Application.Services.Interfaces
 {
     public interface IHeroService : 
-        IHaveBaseOperationService<Hero, HeroCreateModel, HeroUpdateModel, int>
+        IService<Hero, HeroCreateModel, HeroUpdateModel, int>
     {
-        Task<IReadOnlyList<Hero>> GetAllAsync();
-
         void CheckDuplicates(List<Hero> heroes);
     }
 }

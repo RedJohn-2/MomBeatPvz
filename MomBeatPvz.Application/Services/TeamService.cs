@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using MomBeatPvz.Application.Interfaces;
 using MomBeatPvz.Application.Services.Abstract;
 using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Exceptions;
@@ -18,18 +19,20 @@ namespace MomBeatPvz.Application.Services
     {
         private readonly IHeroService _heroService;
 
-        public TeamService(ITeamStore teamStore, IHeroService heroService, IDistributedCache) : base(teamStore, distributedCache)
+        protected override string ModelName => nameof(Team);
+
+        public TeamService(ITeamStore teamStore, IHeroService heroService, ICacheProvider cache) : base(teamStore, cache)
         {
             _heroService = heroService;
         }
 
-        public async override Task CreateAsync(TeamCreateModel model)
+        public async override Task CreateAsync(TeamCreateModel model, CancellationToken cancellationToken)
         {
             CheckTeamSize(model.Heroes);
 
             _heroService.CheckDuplicates(model.Heroes);
 
-            await base.CreateAsync(model);
+            await base.CreateAsync(model, cancellationToken);
         }
 
         private static void CheckTeamSize(List<Hero> heroes)
@@ -40,7 +43,7 @@ namespace MomBeatPvz.Application.Services
             }
         }
 
-        public async override Task UpdateAsync(TeamUpdateModel model)
+        public async override Task UpdateAsync(TeamUpdateModel model, CancellationToken cancellationToken)
         {
             if (model.Heroes is not null)
             {
@@ -49,7 +52,7 @@ namespace MomBeatPvz.Application.Services
                 _heroService.CheckDuplicates(model.Heroes);
             }
 
-            await base.UpdateAsync(model);
+            await base.UpdateAsync(model, cancellationToken);
         }
 
         public void CheckDuplicates(List<Team> teams)

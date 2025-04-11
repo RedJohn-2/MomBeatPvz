@@ -5,6 +5,7 @@ using MomBeatPvz.Api.BackgroundServices;
 using MomBeatPvz.Api.Extentions;
 using MomBeatPvz.Api.Mapping;
 using MomBeatPvz.Infrastructure.Auth;
+using MomBeatPvz.Infrastructure.Cache;
 using MomBeatPvz.Infrastructure.RecalculatePrices;
 using MomBeatPvz.Persistence;
 using MomBeatPvz.Persistence.Mapping;
@@ -25,8 +26,11 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(J
 
 builder.Services.Configure<HashOptions>(builder.Configuration.GetSection(nameof(HashOptions)));
 
+builder.Services.Configure<RedisOptions>(builder.Configuration.GetSection(nameof(RedisOptions)));
+
 builder.Services.Configure<RecalculatePricesOptions>(builder.Configuration.GetSection(nameof(RecalculatePricesOptions)));
 
+builder.Services.AddCacheProvider();
 builder.Services.AddUnitOfWork();
 builder.Services.AddUserServices();
 builder.Services.AddHeroServices();
@@ -77,7 +81,7 @@ builder.Services.AddCors(opts =>
 {
     opts.AddDefaultPolicy(p =>
     {
-        p.WithOrigins("http://localhost:5173");
+        p.WithOrigins("https://jplqp5-83-139-146-176.ru.tuna.am");
         p.AllowAnyHeader();
         p.AllowAnyMethod();
     });

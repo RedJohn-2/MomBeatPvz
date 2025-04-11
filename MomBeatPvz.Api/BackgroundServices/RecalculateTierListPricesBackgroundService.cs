@@ -30,7 +30,7 @@ namespace MomBeatPvz.Api.BackgroundServices
                     var recalculateOperation = 
                         scope.ServiceProvider.GetRequiredService<IRecalculateTierListPricesOperation>();
 
-                    await recalculateOperation.Operate();
+                    await recalculateOperation.Operate(stoppingToken);
                 }
 
                 await Task.Delay(1000 * _recalcOpt.RecalculateTimeSeconds, stoppingToken);

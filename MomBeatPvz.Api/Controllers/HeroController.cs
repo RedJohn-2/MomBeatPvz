@@ -26,7 +26,7 @@ namespace MomBeatPvz.Api.Controllers
 
         [HttpPost("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Create(HeroCreateRequestDto dto)
+        public async Task<ActionResult> Create(HeroCreateRequestDto dto, CancellationToken cancellationToken)
         {
             var model = new HeroCreateModel
             {
@@ -34,22 +34,22 @@ namespace MomBeatPvz.Api.Controllers
                 Url = dto.Url
             };
 
-            await _heroService.CreateAsync(model);
+            await _heroService.CreateAsync(model, cancellationToken);
 
             return Ok();
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult> GetById(int id)
+        public async Task<ActionResult> GetById(int id, CancellationToken cancellationToken)
         {
-            var hero = await _heroService.GetByIdAsync(id);
+            var hero = await _heroService.GetByIdAsync(id, cancellationToken);
 
             return Ok(_mapper.Map<HeroResponseDto>(hero));
         }
 
         [HttpPut("[action]")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> Update(HeroUpdateRequestDto dto)
+        public async Task<ActionResult> Update(HeroUpdateRequestDto dto, CancellationToken cancellationToken)
         {
             var model = new HeroUpdateModel
             {
@@ -58,17 +58,17 @@ namespace MomBeatPvz.Api.Controllers
                 Url = dto.Url
             };
 
-            await _heroService.UpdateAsync(model);
+            await _heroService.UpdateAsync(model, cancellationToken);
 
             return Ok();
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult> GetAll()
+        public async Task<ActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var heros = await _heroService.GetAllAsync();
+            var heroes = await _heroService.GetAllAsync(cancellationToken);
 
-            return Ok(_mapper.Map<IReadOnlyList<HeroResponseDto>>(heros));
+            return Ok(_mapper.Map<IReadOnlyCollection<HeroResponseDto>>(heroes));
         }
     }
 }

@@ -8,6 +8,7 @@ using MomBeatPvz.Application.Services;
 using MomBeatPvz.Application.Services.Interfaces;
 using MomBeatPvz.Core.Store;
 using MomBeatPvz.Infrastructure.Auth;
+using MomBeatPvz.Infrastructure.Cache;
 using MomBeatPvz.Persistence.Operations;
 using MomBeatPvz.Persistence.Repositories;
 using System.Text;
@@ -64,6 +65,13 @@ namespace MomBeatPvz.Api.Extentions
         public static IServiceCollection AddUnitOfWork(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddCacheProvider(this IServiceCollection services)
+        {
+            services.AddScoped<ICacheProvider, RedisProvider>();
 
             return services;
         }
